@@ -81,6 +81,15 @@ export default function DemoPage() {
   const [generatedFeedback, setGeneratedFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleDataAvailable = useCallback(
+    ({ data }: BlobEvent) => {
+      if (data.size > 0) {
+        setRecordedChunks((prev) => prev.concat(data));
+      }
+    },
+    [setRecordedChunks],
+  );
+
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
   }, []);
@@ -105,7 +114,13 @@ export default function DemoPage() {
       );
       mediaRecorderRef.current.start();
     }
-  }, [videoEnded, webcamRef, setCapturing, mediaRecorderRef]);
+  }, [
+    videoEnded,
+    webcamRef,
+    setCapturing,
+    mediaRecorderRef,
+    handleDataAvailable,
+  ]);
 
   const handleStartCaptureClick = useCallback(() => {
     const startTimer = document.getElementById("startTimer");
@@ -116,23 +131,14 @@ export default function DemoPage() {
     if (vidRef.current) {
       vidRef.current.play();
     }
-  }, [webcamRef, setCapturing, mediaRecorderRef]);
-
-  const handleDataAvailable = useCallback(
-    ({ data }: BlobEvent) => {
-      if (data.size > 0) {
-        setRecordedChunks((prev) => prev.concat(data));
-      }
-    },
-    [setRecordedChunks],
-  );
+  }, []);
 
   const handleStopCaptureClick = useCallback(() => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
     }
     setCapturing(false);
-  }, [mediaRecorderRef, webcamRef, setCapturing]);
+  }, [mediaRecorderRef, setCapturing]);
 
   useEffect(() => {
     let timer: any = null;
@@ -149,7 +155,7 @@ export default function DemoPage() {
     return () => {
       clearInterval(timer);
     };
-  });
+  }, [capturing, seconds, handleStopCaptureClick]);
 
   const handleDownload = async () => {
     if (recordedChunks.length) {
