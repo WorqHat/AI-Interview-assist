@@ -1,4 +1,4 @@
-# AI-Interview-assist
+# AI-Interview-assist by WorqHat AI
 
 <p align="center">
   Create your own mock interview simulator using the power of WorqHat AI
@@ -12,8 +12,6 @@
     <img src="https://img.shields.io/github/stars/WorqHat/AI-Interview-assist?label=WorqHat%2FAI-Interview-assist" alt="WorqHat repo star count" />
   </a>
 </p>
-
-<!-- Create a Button to show the live project -->
 
 <p align="center">
   <a href="https://ai-interview-assist.vercel.app/">
