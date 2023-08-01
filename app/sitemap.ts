@@ -3,11 +3,11 @@ import { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: "https://demo.useliftoff.com",
+      url: "https://ai-interview-assist.vercel.app/",
       lastModified: new Date(),
     },
     {
-      url: "https://demo.useliftoff.com/demo",
+      url: "https://ai-interview-assist.vercel.app/",
       lastModified: new Date(),
     },
   ];

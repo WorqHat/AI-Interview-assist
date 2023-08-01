@@ -9,7 +9,7 @@ export const metadata: Metadata = {
       "This is a demo of WorqHat AI, an AI-powered mock interview platform that helps you practice for your next job interview.",
     images: [
       {
-        url: "https://demo.useliftoff.com/opengraph-image",
+        url: "https://ai-interview-assist.vercel.app//opengraph-image",
       },
     ],
   },
@@ -18,10 +18,10 @@ export const metadata: Metadata = {
     title: "WorqHat AI Demo - AI Mock Interviews",
     description:
       "This is a demo of WorqHat AI, an AI-powered mock interview platform that helps you practice for your next job interview.",
-    images: ["https://demo.useliftoff.com/opengraph-image"],
+    images: ["https://ai-interview-assist.vercel.app//opengraph-image"],
     creator: "@worqhat",
   },
-  metadataBase: new URL("https://demo.useliftoff.com"),
+  metadataBase: new URL("https://ai-interview-assist.vercel.app/"),
   themeColor: "#273e92",
 };
 
