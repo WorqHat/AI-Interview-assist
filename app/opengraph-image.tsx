@@ -7,7 +7,7 @@ export const contentType = "image/png";
 
 export default async function OG() {
   // Font
-  const interSemiBold = await fetch(
+  const JetBrainsMono = await fetch(
     new URL("./fonts/JetBrainsMono-Regular.ttf", import.meta.url),
   ).then((res) => res.arrayBuffer());
 
@@ -31,7 +31,7 @@ export default async function OG() {
             "../public/apple-touch-icon.png",
             import.meta.url,
           ).toString()}
-          alt="Liftoff Logo"
+          alt="WorqHat Logo"
           tw="w-20 h-20 mb-4 opacity-95"
         />
         <h1
@@ -54,8 +54,8 @@ export default async function OG() {
       height: 630,
       fonts: [
         {
-          name: "Inter",
-          data: interSemiBold,
+          name: "JetbrainsMono",
+          data: JetBrainsMono,
         },
       ],
     },

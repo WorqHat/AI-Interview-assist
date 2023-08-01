@@ -3,6 +3,11 @@ import { IncomingForm } from "formidable";
 const fs = require("fs");
 import FormData from "form-data";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log("api", process.env.NEXT_PUBLIC_X_API_KEY);
+
 
 export const config = {
   api: {
@@ -40,8 +45,8 @@ export default async function handler(req: any, res: any) {
   const options = {
     method: "POST",
     headers: {
-      "x-api-key": "U2FsdGVkX1+Sk6YyCE/qSsxu++vzqt0+G8WII+DFpcbNS8LbTTTIibdN/4Jg5A2s",
-      "x-org-key": "U2FsdGVkX1/tXNgNZtTaRxvfCBr63WZddF09RiJ3YF4e5anXW1YHtscWb4LFKhhli+2VkdE8rHHacSlh086kQw=="
+      "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
+      "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
     },
     body: formData,
   };

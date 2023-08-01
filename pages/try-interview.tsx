@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRef, useState, useEffect, useCallback } from "react";
 import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import dotenv from "dotenv";
+dotenv.config();
 
 const questions = [
   {
@@ -243,10 +245,8 @@ export default function DemoPage() {
           const options = {
             method: "POST",
             headers: {
-              "x-api-key":
-                "U2FsdGVkX1+Sk6YyCE/qSsxu++vzqt0+G8WII+DFpcbNS8LbTTTIibdN/4Jg5A2s",
-              "x-org-key":
-                "U2FsdGVkX1/tXNgNZtTaRxvfCBr63WZddF09RiJ3YF4e5anXW1YHtscWb4LFKhhli+2VkdE8rHHacSlh086kQw==",
+              "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
+              "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -1353,7 +1353,7 @@ export default function DemoPage() {
                       R
                     </div>
                     <p className="ml-[4px] mr-[6px] flex-shrink-0">
-                      Richard Monroe
+                      Sagnik Ghosh
                     </p>
                     <div className="ml-auto">
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24">

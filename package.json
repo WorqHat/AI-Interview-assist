@@ -24,6 +24,7 @@
     "@upstash/ratelimit": "^0.4.2",
     "@upstash/redis": "^1.20.6",
     "clsx": "^1.2.1",
+    "dotenv": "^16.3.1",
     "encoding": "^0.1.13",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
