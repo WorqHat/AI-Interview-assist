@@ -4,7 +4,7 @@ import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 
 export default async function middleware(
   request: NextRequest,
-  event: NextFetchEvent
+  event: NextFetchEvent,
 ): Promise<Response | undefined> {
   const ip = request.ip ?? "127.0.0.1";
 
@@ -23,7 +23,7 @@ export default async function middleware(
     });
 
     const { success, pending, limit, reset, remaining } = await ratelimit.limit(
-      `ratelimit_middleware_${ip}`
+      `ratelimit_middleware_${ip}`,
     );
     event.waitUntil(pending);
 
