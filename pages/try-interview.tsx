@@ -10,42 +10,60 @@ const questions = [
   {
     id: 1,
     name: "Behavioral",
-    description: "From LinkedIn, Amazon, Adobe",
+    description: "From LinkedIn, Amazon, Adobe and Disney",
     difficulty: "Easy",
   },
   {
     id: 2,
     name: "Technical",
-    description: "From Google, Meta, and Apple",
+    description: "From Google, Meta, Atlassian and Apple",
     difficulty: "Medium",
   },
 ];
 
 const interviewers = [
+  // {
+  //   id: "John",
+  //   name: "John",
+  //   description: "Software Engineering",
+  //   level: "L3",
+  // },
+  // {
+  //   id: "Richard",
+  //   name: "Richard",
+  //   description: "Product Management",
+  //   level: "L5",
+  // },
+  // {
+  //   id: "Sarah",
+  //   name: "Sarah",
+  //   description: "Other",
+  //   level: "L7",
+  // },
   {
-    id: "John",
-    name: "John",
+    id: "Ravi",
+    name: "Ravi",
     description: "Software Engineering",
     level: "L3",
   },
   {
-    id: "Richard",
-    name: "Richard",
+    id: "Sunita",
+    name: "Sunita",
     description: "Product Management",
     level: "L5",
   },
   {
-    id: "Sarah",
-    name: "Sarah",
+    id: "Amit",
+    name: "Amit",
     description: "Other",
     level: "L7",
   },
 ];
 
 const ffmpeg = createFFmpeg({
-  // corePath: `http://localhost:3000/ffmpeg/dist/ffmpeg-core.js`,
+  corePath: `http://localhost:3000/ffmpeg/dist/ffmpeg-core.js`,
   // I've included a default import above (and files in the public directory), but you can also use a CDN like this:
-  corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
+  // corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
   log: true,
 });
 
@@ -190,26 +208,22 @@ export default function DemoPage() {
 
       const formData = new FormData();
       formData.append("file", output, `${unique_id}.mp3`);
-      formData.append("model", "whisper-1");
 
       const question =
         selected.name === "Behavioral"
           ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
-          : selectedInterviewer.name === "John"
+          : selectedInterviewer.name === "Ravi"
           ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-          : selectedInterviewer.name === "Richard"
+          : selectedInterviewer.name === "Sunita"
           ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
           : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?";
 
       setStatus("Transcribing");
 
-      const upload = await fetch(
-        `/api/transcribe?question=${encodeURIComponent(question)}`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const upload = await fetch(`/api/transcribe`, {
+        method: "POST",
+        body: formData,
+      });
       const results = await upload.json();
 
       if (upload.ok) {
@@ -241,36 +255,34 @@ export default function DemoPage() {
           } \n\n\ Feedback on the candidate's response:`;
 
           setGeneratedFeedback("");
-          const response = await fetch("/api/generate", {
+
+          const url = "https://api.worqhat.com/api/ai/content/v2";
+          const options = {
             method: "POST",
             headers: {
+              "x-api-key":
+                "U2FsdGVkX1+Sk6YyCE/qSsxu++vzqt0+G8WII+DFpcbNS8LbTTTIibdN/4Jg5A2s",
+              "x-org-key":
+                "U2FsdGVkX1/tXNgNZtTaRxvfCBr63WZddF09RiJ3YF4e5anXW1YHtscWb4LFKhhli+2VkdE8rHHacSlh086kQw==",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              prompt,
+              training_data:
+                "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
+              question: prompt,
+              randomness: 0.2,
+              content_size: "small",
             }),
-          });
+          };
 
-          if (!response.ok) {
-            throw new Error(response.statusText);
+          const response = await fetch(url, options);
+          const data = await response.json();
+
+          if (data.error) {
+            console.log(data.error);
           }
 
-          // This data is a ReadableStream
-          const data = response.body;
-          if (!data) {
-            return;
-          }
-
-          const reader = data.getReader();
-          const decoder = new TextDecoder();
-          let done = false;
-
-          while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            setGeneratedFeedback((prev: any) => prev + chunkValue);
-          }
+            setGeneratedFeedback(data.content);
         }
       } else {
         console.error("Upload failed.");
@@ -305,38 +317,6 @@ export default function DemoPage() {
     <AnimatePresence>
       {step === 3 ? (
         <div className="w-full min-h-screen flex flex-col px-4 pt-2 pb-8 md:px-8 md:py-2 bg-[#FCFCFC] relative overflow-x-hidden">
-          <p className="absolute w-full top-0 h-[60px] flex flex-row justify-between -ml-4 md:-ml-8">
-            <span className="text-sm text-[#1a2b3b] font-medium">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden xl:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden xl:block">
-              demo interview
-            </span>
-          </p>
           {completed ? (
             <div className="w-full flex flex-col max-w-[1080px] mx-auto mt-[10vh] overflow-y-auto pb-8 md:pb-12">
               <motion.div
@@ -385,12 +365,14 @@ export default function DemoPage() {
                     />
                   </svg>
                   <p className="text-[14px] font-normal leading-[20px] text-[#1a2b3b]">
-                    Video is not stored on our servers, and will go away as soon
-                    as you leave the page.
+                    We don{`'`}t store your attempts anywhere, we transcribe
+                    your video on your device, and then send the transcription
+                    to the server for processing in the form of temporary audio
+                    files.
                   </p>
                 </div>
                 <Link
-                  href="https://github.com/Tameyer41/liftoff"
+                  href="https://github.com/WorqHat/AI-Interview-assist"
                   target="_blank"
                   className="group rounded-full pl-[8px] min-w-[180px] pr-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#1E2B3A] text-white hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] no-underline flex gap-x-2  active:scale-95 scale-100 duration-75"
                   style={{
@@ -447,7 +429,7 @@ export default function DemoPage() {
                   <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
                     Feedback
                   </h2>
-                  <div className="mt-4 text-sm flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
+                  <div className="mt-4 feedbackText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
                     <p className="prose prose-sm max-w-none">
                       {generatedFeedback}
                     </p>
@@ -462,9 +444,9 @@ export default function DemoPage() {
                   <h2 className="text-2xl font-semibold text-left text-[#1D2B3A] mb-2">
                     {selected.name === "Behavioral"
                       ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
-                      : selectedInterviewer.name === "John"
+                      : selectedInterviewer.name === "Ravi"
                       ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-                      : selectedInterviewer.name === "Richard"
+                      : selectedInterviewer.name === "Sunita"
                       ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
                       : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
                   </h2>
@@ -519,7 +501,7 @@ export default function DemoPage() {
                               controls={false}
                               ref={vidRef}
                               playsInline
-                              className="h-full object-cover w-full rounded-md md:rounded-[12px] aspect-video"
+                              className="h-full object-cover w-full rounded-md md:rounded-[12px] aspect-video hidden"
                               crossOrigin="anonymous"
                             >
                               <source
@@ -728,8 +710,10 @@ export default function DemoPage() {
                       />
                     </svg>
                     <p className="text-[14px] font-normal leading-[20px] text-[#1a2b3b]">
-                      Video is not stored on our servers, it is solely used for
-                      transcription.
+                      We don{`'`}t store your attempts anywhere, we transcribe
+                      your video on your device, and then send the transcription
+                      to the server for processing in the form of temporary
+                      audio files.
                     </p>
                   </motion.div>
                 </div>
@@ -763,7 +747,7 @@ export default function DemoPage() {
                       Restart demo
                     </button>
                     <Link
-                      href="https://github.com/Tameyer41/liftoff"
+                      href="https://github.com/WorqHat/AI-Interview-assist"
                       target="_blank"
                       className="group rounded-full pl-[8px] min-w-[180px] pr-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#1E2B3A] text-white hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] no-underline flex gap-x-2  active:scale-95 scale-100 duration-75"
                       style={{
@@ -803,31 +787,6 @@ export default function DemoPage() {
         </div>
       ) : (
         <div className="flex flex-col md:flex-row w-full md:overflow-hidden">
-          <motion.p
-            initial={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1.25, ease: [0.23, 1, 0.32, 1] }}
-            className="absolute w-full md:w-1/2 top-0 h-[60px] flex flex-row justify-between"
-          >
-            <span className="text-sm text-[#1a2b3b] font-medium">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium hidden sm:block">
-              demo interview
-            </span>
-            <span className="text-sm text-[#1a2b3b] font-medium opacity-20 hidden xl:block">
-              demo interview
-            </span>
-          </motion.p>
           <div className="w-full min-h-[60vh] md:w-1/2 md:h-screen flex flex-col px-4 pt-2 pb-8 md:px-0 md:py-2 bg-[#FCFCFC] justify-center">
             <div className="h-full w-full items-center justify-center flex flex-col">
               {step === 1 ? (
@@ -1098,182 +1057,9 @@ export default function DemoPage() {
                                   as="span"
                                   className="flex text-sm ml-4 mt-0 flex-col text-right items-center justify-center"
                                 >
-                                  <span className=" text-gray-500">
-                                    <svg
-                                      className="w-[28px] h-full"
-                                      viewBox="0 0 38 30"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <g filter="url(#filter0_d_34_25)">
-                                        <g clipPath="url(#clip0_34_25)">
-                                          <mask
-                                            id="mask0_34_25"
-                                            style={{ maskType: "luminance" }}
-                                            maskUnits="userSpaceOnUse"
-                                            x="3"
-                                            y="1"
-                                            width="32"
-                                            height="24"
-                                          >
-                                            <rect
-                                              x="3"
-                                              y="1"
-                                              width="32"
-                                              height="24"
-                                              fill="white"
-                                            />
-                                          </mask>
-                                          <g mask="url(#mask0_34_25)">
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 1H35V25H3V1Z"
-                                              fill="#F7FCFF"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 15.6666V17.6666H35V15.6666H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 19.3334V21.3334H35V19.3334H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 8.33337V10.3334H35V8.33337H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 23V25H35V23H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 12V14H35V12H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 1V3H35V1H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M3 4.66663V6.66663H35V4.66663H3Z"
-                                              fill="#E31D1C"
-                                            />
-                                            <rect
-                                              x="3"
-                                              y="1"
-                                              width="20"
-                                              height="13"
-                                              fill="#2E42A5"
-                                            />
-                                            <path
-                                              fillRule="evenodd"
-                                              clipRule="evenodd"
-                                              d="M4.72221 3.93871L3.99633 4.44759L4.2414 3.54198L3.59668 2.96807H4.43877L4.7212 2.229L5.05237 2.96807H5.77022L5.20619 3.54198L5.42455 4.44759L4.72221 3.93871ZM8.72221 3.93871L7.99633 4.44759L8.2414 3.54198L7.59668 2.96807H8.43877L8.7212 2.229L9.05237 2.96807H9.77022L9.20619 3.54198L9.42455 4.44759L8.72221 3.93871ZM11.9963 4.44759L12.7222 3.93871L13.4245 4.44759L13.2062 3.54198L13.7702 2.96807H13.0524L12.7212 2.229L12.4388 2.96807H11.5967L12.2414 3.54198L11.9963 4.44759ZM16.7222 3.93871L15.9963 4.44759L16.2414 3.54198L15.5967 2.96807H16.4388L16.7212 2.229L17.0524 2.96807H17.7702L17.2062 3.54198L17.4245 4.44759L16.7222 3.93871ZM3.99633 8.44759L4.72221 7.93871L5.42455 8.44759L5.20619 7.54198L5.77022 6.96807H5.05237L4.7212 6.229L4.43877 6.96807H3.59668L4.2414 7.54198L3.99633 8.44759ZM8.72221 7.93871L7.99633 8.44759L8.2414 7.54198L7.59668 6.96807H8.43877L8.7212 6.229L9.05237 6.96807H9.77022L9.20619 7.54198L9.42455 8.44759L8.72221 7.93871ZM11.9963 8.44759L12.7222 7.93871L13.4245 8.44759L13.2062 7.54198L13.7702 6.96807H13.0524L12.7212 6.229L12.4388 6.96807H11.5967L12.2414 7.54198L11.9963 8.44759ZM16.7222 7.93871L15.9963 8.44759L16.2414 7.54198L15.5967 6.96807H16.4388L16.7212 6.229L17.0524 6.96807H17.7702L17.2062 7.54198L17.4245 8.44759L16.7222 7.93871ZM3.99633 12.4476L4.72221 11.9387L5.42455 12.4476L5.20619 11.542L5.77022 10.9681H5.05237L4.7212 10.229L4.43877 10.9681H3.59668L4.2414 11.542L3.99633 12.4476ZM8.72221 11.9387L7.99633 12.4476L8.2414 11.542L7.59668 10.9681H8.43877L8.7212 10.229L9.05237 10.9681H9.77022L9.20619 11.542L9.42455 12.4476L8.72221 11.9387ZM11.9963 12.4476L12.7222 11.9387L13.4245 12.4476L13.2062 11.542L13.7702 10.9681H13.0524L12.7212 10.229L12.4388 10.9681H11.5967L12.2414 11.542L11.9963 12.4476ZM16.7222 11.9387L15.9963 12.4476L16.2414 11.542L15.5967 10.9681H16.4388L16.7212 10.229L17.0524 10.9681H17.7702L17.2062 11.542L17.4245 12.4476L16.7222 11.9387ZM19.9963 4.44759L20.7222 3.93871L21.4245 4.44759L21.2062 3.54198L21.7702 2.96807H21.0524L20.7212 2.229L20.4388 2.96807H19.5967L20.2414 3.54198L19.9963 4.44759ZM20.7222 7.93871L19.9963 8.44759L20.2414 7.54198L19.5967 6.96807H20.4388L20.7212 6.229L21.0524 6.96807H21.7702L21.2062 7.54198L21.4245 8.44759L20.7222 7.93871ZM19.9963 12.4476L20.7222 11.9387L21.4245 12.4476L21.2062 11.542L21.7702 10.9681H21.0524L20.7212 10.229L20.4388 10.9681H19.5967L20.2414 11.542L19.9963 12.4476ZM6.72221 5.93871L5.99633 6.44759L6.2414 5.54198L5.59668 4.96807H6.43877L6.7212 4.229L7.05237 4.96807H7.77022L7.20619 5.54198L7.42455 6.44759L6.72221 5.93871ZM9.99633 6.44759L10.7222 5.93871L11.4245 6.44759L11.2062 5.54198L11.7702 4.96807H11.0524L10.7212 4.229L10.4388 4.96807H9.59668L10.2414 5.54198L9.99633 6.44759ZM14.7222 5.93871L13.9963 6.44759L14.2414 5.54198L13.5967 4.96807H14.4388L14.7212 4.229L15.0524 4.96807H15.7702L15.2062 5.54198L15.4245 6.44759L14.7222 5.93871ZM5.99633 10.4476L6.72221 9.93871L7.42455 10.4476L7.20619 9.54198L7.77022 8.96807H7.05237L6.7212 8.229L6.43877 8.96807H5.59668L6.2414 9.54198L5.99633 10.4476ZM10.7222 9.93871L9.99633 10.4476L10.2414 9.54198L9.59668 8.96807H10.4388L10.7212 8.229L11.0524 8.96807H11.7702L11.2062 9.54198L11.4245 10.4476L10.7222 9.93871ZM13.9963 10.4476L14.7222 9.93871L15.4245 10.4476L15.2062 9.54198L15.7702 8.96807H15.0524L14.7212 8.229L14.4388 8.96807H13.5967L14.2414 9.54198L13.9963 10.4476ZM18.7222 5.93871L17.9963 6.44759L18.2414 5.54198L17.5967 4.96807H18.4388L18.7212 4.229L19.0524 4.96807H19.7702L19.2062 5.54198L19.4245 6.44759L18.7222 5.93871ZM17.9963 10.4476L18.7222 9.93871L19.4245 10.4476L19.2062 9.54198L19.7702 8.96807H19.0524L18.7212 8.229L18.4388 8.96807H17.5967L18.2414 9.54198L17.9963 10.4476Z"
-                                              fill="#F7FCFF"
-                                            />
-                                          </g>
-                                          <rect
-                                            x="3"
-                                            y="1"
-                                            width="32"
-                                            height="24"
-                                            fill="url(#paint0_linear_34_25)"
-                                            style={{ mixBlendMode: "overlay" }}
-                                          />
-                                        </g>
-                                        <rect
-                                          x="3.5"
-                                          y="1.5"
-                                          width="31"
-                                          height="23"
-                                          rx="1.5"
-                                          stroke="black"
-                                          strokeOpacity="0.1"
-                                          style={{ mixBlendMode: "multiply" }}
-                                        />
-                                      </g>
-                                      <defs>
-                                        <filter
-                                          id="filter0_d_34_25"
-                                          x="0"
-                                          y="0"
-                                          width="38"
-                                          height="30"
-                                          filterUnits="userSpaceOnUse"
-                                          colorInterpolationFilters="sRGB"
-                                        >
-                                          <feFlood
-                                            floodOpacity="0"
-                                            result="BackgroundImageFix"
-                                          />
-                                          <feColorMatrix
-                                            in="SourceAlpha"
-                                            type="matrix"
-                                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                                            result="hardAlpha"
-                                          />
-                                          <feOffset dy="2" />
-                                          <feGaussianBlur stdDeviation="1.5" />
-                                          <feColorMatrix
-                                            type="matrix"
-                                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
-                                          />
-                                          <feBlend
-                                            mode="normal"
-                                            in2="BackgroundImageFix"
-                                            result="effect1_dropShadow_34_25"
-                                          />
-                                          <feBlend
-                                            mode="normal"
-                                            in="SourceGraphic"
-                                            in2="effect1_dropShadow_34_25"
-                                            result="shape"
-                                          />
-                                        </filter>
-                                        <linearGradient
-                                          id="paint0_linear_34_25"
-                                          x1="19"
-                                          y1="1"
-                                          x2="19"
-                                          y2="25"
-                                          gradientUnits="userSpaceOnUse"
-                                        >
-                                          <stop
-                                            stopColor="white"
-                                            stopOpacity="0.7"
-                                          />
-                                          <stop offset="1" stopOpacity="0.3" />
-                                        </linearGradient>
-                                        <clipPath id="clip0_34_25">
-                                          <rect
-                                            x="3"
-                                            y="1"
-                                            width="32"
-                                            height="24"
-                                            rx="2"
-                                            fill="white"
-                                          />
-                                        </clipPath>
-                                      </defs>
-                                    </svg>
-                                  </span>
+                                  <span className=" text-gray-500"></span>
                                   <span className="font-medium text-gray-900">
-                                    EN
+                                    EN - INDIA
                                   </span>
                                 </RadioGroup.Description>
                                 <span
@@ -1390,7 +1176,7 @@ export default function DemoPage() {
                 <ul className="mb-auto list-none">
                   <li className="list-none flex items-center">
                     <p className="text-[12px] font-extrabold text-[#1E293B]">
-                      Liftoff
+                      WorqHat AI
                     </p>
                   </li>
                   <li className="mt-4 list-none flex items-center rounded-[9px] text-gray-900 py-[2px]">
@@ -1422,7 +1208,7 @@ export default function DemoPage() {
                         d="M5 8.25H19"
                       ></path>{" "}
                     </svg>
-                    <p className="ml-[3px] mr-[6px]">Home</p>
+                    <p className="ml-[3px] mr-[6px]">About WorqHat</p>
                   </li>
                   <li className="mt-1 list-none flex items-center rounded-[9px] text-gray-900 py-[4px]">
                     <svg
@@ -1445,7 +1231,7 @@ export default function DemoPage() {
                         d="M15.25 12L9.75 8.75V15.25L15.25 12Z"
                       ></path>
                     </svg>
-                    <p className="ml-[3px] mr-[6px]">Interview Vault</p>
+                    <p className="ml-[3px] mr-[6px]">Interviews</p>
                     <div className="ml-auto text-[#121217] transform">
                       <svg
                         width="24"
@@ -1545,7 +1331,7 @@ export default function DemoPage() {
                         d="M14.75 10.25C16.2688 10.25 17.25 9.01878 17.25 7.5C17.25 5.98122 16.2688 4.75 14.75 4.75"
                       ></path>
                     </svg>
-                    <p className="ml-[3px] mr-[6px]">Community</p>
+                    <p className="ml-[3px] mr-[6px]">Join Community</p>
                   </li>
                   <li className="mt-1 list-none flex items-center rounded-[9px] text-gray-900 py-[4px]">
                     <svg
@@ -1569,29 +1355,6 @@ export default function DemoPage() {
                       ></path>
                     </svg>
                     <p className="ml-[3px] mr-[6px]">Resources</p>
-                  </li>
-                  <li className="mt-1 list-none flex items-center rounded-[9px] text-gray-900 py-[4px]">
-                    <svg
-                      className="h-4 w-4 text-gray-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M13.1191 5.61336C13.0508 5.11856 12.6279 4.75 12.1285 4.75H11.8715C11.3721 4.75 10.9492 5.11856 10.8809 5.61336L10.7938 6.24511C10.7382 6.64815 10.4403 6.96897 10.0622 7.11922C10.006 7.14156 9.95021 7.16484 9.89497 7.18905C9.52217 7.3524 9.08438 7.3384 8.75876 7.09419L8.45119 6.86351C8.05307 6.56492 7.49597 6.60451 7.14408 6.9564L6.95641 7.14408C6.60452 7.49597 6.56492 8.05306 6.86351 8.45118L7.09419 8.75876C7.33841 9.08437 7.3524 9.52216 7.18905 9.89497C7.16484 9.95021 7.14156 10.006 7.11922 10.0622C6.96897 10.4403 6.64815 10.7382 6.24511 10.7938L5.61336 10.8809C5.11856 10.9492 4.75 11.372 4.75 11.8715V12.1285C4.75 12.6279 5.11856 13.0508 5.61336 13.1191L6.24511 13.2062C6.64815 13.2618 6.96897 13.5597 7.11922 13.9378C7.14156 13.994 7.16484 14.0498 7.18905 14.105C7.3524 14.4778 7.3384 14.9156 7.09419 15.2412L6.86351 15.5488C6.56492 15.9469 6.60451 16.504 6.9564 16.8559L7.14408 17.0436C7.49597 17.3955 8.05306 17.4351 8.45118 17.1365L8.75876 16.9058C9.08437 16.6616 9.52216 16.6476 9.89496 16.811C9.95021 16.8352 10.006 16.8584 10.0622 16.8808C10.4403 17.031 10.7382 17.3519 10.7938 17.7549L10.8809 18.3866C10.9492 18.8814 11.3721 19.25 11.8715 19.25H12.1285C12.6279 19.25 13.0508 18.8814 13.1191 18.3866L13.2062 17.7549C13.2618 17.3519 13.5597 17.031 13.9378 16.8808C13.994 16.8584 14.0498 16.8352 14.105 16.8109C14.4778 16.6476 14.9156 16.6616 15.2412 16.9058L15.5488 17.1365C15.9469 17.4351 16.504 17.3955 16.8559 17.0436L17.0436 16.8559C17.3955 16.504 17.4351 15.9469 17.1365 15.5488L16.9058 15.2412C16.6616 14.9156 16.6476 14.4778 16.811 14.105C16.8352 14.0498 16.8584 13.994 16.8808 13.9378C17.031 13.5597 17.3519 13.2618 17.7549 13.2062L18.3866 13.1191C18.8814 13.0508 19.25 12.6279 19.25 12.1285V11.8715C19.25 11.3721 18.8814 10.9492 18.3866 10.8809L17.7549 10.7938C17.3519 10.7382 17.031 10.4403 16.8808 10.0622C16.8584 10.006 16.8352 9.95021 16.8109 9.89496C16.6476 9.52216 16.6616 9.08437 16.9058 8.75875L17.1365 8.4512C17.4351 8.05308 17.3955 7.49599 17.0436 7.1441L16.8559 6.95642C16.504 6.60453 15.9469 6.56494 15.5488 6.86353L15.2412 7.09419C14.9156 7.33841 14.4778 7.3524 14.105 7.18905C14.0498 7.16484 13.994 7.14156 13.9378 7.11922C13.5597 6.96897 13.2618 6.64815 13.2062 6.24511L13.1191 5.61336Z"
-                      ></path>
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M13.25 12C13.25 12.6904 12.6904 13.25 12 13.25C11.3096 13.25 10.75 12.6904 10.75 12C10.75 11.3096 11.3096 10.75 12 10.75C12.6904 10.75 13.25 11.3096 13.25 12Z"
-                      ></path>
-                    </svg>
-                    <p className="ml-[3px] mr-[6px]">Settings</p>
                   </li>
                 </ul>
                 <ul className="flex flex-col mb-[10px]">
@@ -1657,9 +1420,9 @@ export default function DemoPage() {
                     >
                       {selected.name === "Behavioral"
                         ? "Tell me about yourself"
-                        : selectedInterviewer.name === "John"
+                        : selectedInterviewer.name === "Ravi"
                         ? "What is a Hash Table, and what is the average case for each of its operations?"
-                        : selectedInterviewer.name === "Richard"
+                        : selectedInterviewer.name === "Sunita"
                         ? "Uber is looking to expand its product line. How would you go about doing this?"
                         : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
                     </motion.span>

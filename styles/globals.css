@@ -8,3 +8,12 @@
   --gradient-color-3: #ffcc70;
   --gradient-color-4: #ffffff;
 }
+
+@font-face {
+    font-family: jetbrains-font;
+    src: url(/resources/JetBrainsMonoNL-SemiBoldItalic.ttf);
+}
+
+.feedback {
+    font-family: jetbrains-font;
+}

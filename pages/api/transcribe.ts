@@ -1,6 +1,8 @@
-import { Configuration, OpenAIApi } from "openai";
+// import { Configuration, OpenAIApi } from "openai";
 import { IncomingForm } from "formidable";
 const fs = require("fs");
+import FormData from "form-data";
+import fetch from "node-fetch";
 
 export const config = {
   api: {
@@ -9,11 +11,6 @@ export const config = {
 };
 
 export default async function handler(req: any, res: any) {
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
-
   // Here, we create a temporary file to store the audio file using Vercel's tmp directory
   // As we compressed the file and are limiting recordings to 2.5 minutes, we won't run into trouble with storage capacity
   const fData = await new Promise<{ fields: any; files: any }>(
@@ -34,32 +31,28 @@ export default async function handler(req: any, res: any) {
   const videoFilePath = videoFile?.filepath;
   console.log(videoFilePath);
 
+  const file = fs.createReadStream(videoFilePath); // Replace "path/to/your/file" with the actual path to your file
+
+  const formData = new FormData();
+  formData.append("audio", file);
+
+  const url = "https://api.worqhat.com/api/ai/speech-text";
+  const options = {
+    method: "POST",
+    headers: {
+      "x-api-key": "U2FsdGVkX1+Sk6YyCE/qSsxu++vzqt0+G8WII+DFpcbNS8LbTTTIibdN/4Jg5A2s",
+      "x-org-key": "U2FsdGVkX1/tXNgNZtTaRxvfCBr63WZddF09RiJ3YF4e5anXW1YHtscWb4LFKhhli+2VkdE8rHHacSlh086kQw=="
+    },
+    body: formData,
+  };
+
   try {
-    const resp = await openai.createTranscription(
-      fs.createReadStream(videoFilePath),
-      "whisper-1",
-      // Uncomment the line below if you would also like to capture filler words:
-      // "Please include any filler words such as 'um', 'uh', 'er', or other disfluencies in the transcription. Make sure to also capitalize and punctuate properly."
-    );
-
-    const transcript = resp?.data?.text;
-
-    // Content moderation check
-    const response = await openai.createModeration({
-      input: resp?.data?.text,
-    });
-
-    if (response?.data?.results[0]?.flagged) {
-      res
-        .status(200)
-        .json({ error: "Inappropriate content detected. Please try again." });
-      return;
-    }
-
-    res.status(200).json({ transcript });
-    return resp.data;
+    const response = await fetch(url, options);
+    const data = await response.json() as { content: string; };
+    console.log(data.content);
+    res.status(200).json({ transcript: data.content });
   } catch (error) {
-    console.error("server error", error);
-    res.status(500).json({ error: "Error" });
+    console.error("Error:", error);
+    res.status(500).json({ error: error });
   }
 }
