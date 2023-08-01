@@ -11,7 +11,7 @@
 
 @font-face {
     font-family: jetbrains-font;
-    src: url(/resources/JetBrainsMonoNL-SemiBoldItalic.ttf);
+    src: url(/app/fonts/JetBrainsMono-Regular.ttf);
 }
 
 .feedback {
