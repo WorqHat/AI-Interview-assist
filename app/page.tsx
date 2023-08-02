@@ -29,7 +29,7 @@ export default function Home() {
           </filter>
           <rect width="100%" height="100%" filter="url(#noise)"></rect>
         </svg>
-        <main className="flex flex-col justify-center h-[100%] static md:fixed w-screen overflow-hidden grid-rows-[1fr_repeat(3,auto)_1fr] z-[100] pt-[30px] pb-[320px] px-4 md:px-20 md:py-0">
+        <main className="flex flex-col justify-center z-30 h-[100%] static md:fixed w-screen overflow-hidden grid-rows-[1fr_repeat(3,auto)_1fr] z-[100] pt-[30px] pb-[320px] px-4 md:px-20 md:py-0">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ export default function Home() {
               duration: 0.95,
               ease: [0.165, 0.84, 0.44, 1],
             }}
-            className="relative md:ml-[-10px] md:mb-[37px] font-extrabold text-[16vw] md:text-[130px] font-inter text-[#1E2B3A] leading-[0.9] tracking-[-2px] z-[100]"
+            className="relative md:ml-[-10px] md:mb-[37px] font-extrabold text-[14vw] md:text-[110px] font-inter text-[#1E2B3A] leading-[0.9] tracking-[-2px] z-50"
           >
             Practice <br />
             <span className="text-[#212962]">Tech </span>
@@ -114,10 +114,50 @@ export default function Home() {
               </Link>
             </motion.div>
             <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.65,
+                  duration: 0.55,
+                  ease: [0.075, 0.82, 0.965, 1],
+                }}
+            >
+              <Link
+                  href="/try-interview"
+                  className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#f5f7f9] text-[#1E2B3A] no-underline active:scale-95 scale-100 duration-75"
+                  style={{
+                    boxShadow: "0 1px 1px #0c192714, 0 1px 3px #0c192724",
+                  }}
+              >
+                <span className="mr-2"> Give an Interview </span>
+                <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                      d="M13.75 6.75L19.25 12L13.75 17.25"
+                      stroke="#1E2B3A"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                  />
+                  <path
+                      d="M19 12H4.75"
+                      stroke="#1E2B3A"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            </motion.div>
+            <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                delay: 0.65,
+                delay: 0.75,
                 duration: 0.55,
                 ease: [0.075, 0.82, 0.965, 1],
               }}
@@ -150,51 +190,11 @@ export default function Home() {
                 View WorqHat AI
               </Link>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 0.75,
-                duration: 0.55,
-                ease: [0.075, 0.82, 0.965, 1],
-              }}
-            >
-              <Link
-                href="/try-interview"
-                className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#f5f7f9] text-[#1E2B3A] no-underline active:scale-95 scale-100 duration-75"
-                style={{
-                  boxShadow: "0 1px 1px #0c192714, 0 1px 3px #0c192724",
-                }}
-              >
-                <span className="mr-2"> Give an Interview </span>
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M13.75 6.75L19.25 12L13.75 17.25"
-                    stroke="#1E2B3A"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M19 12H4.75"
-                    stroke="#1E2B3A"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
-            </motion.div>
           </div>
         </main>
 
         <div
-          className="fixed top-0 right-0 w-[80%] md:w-1/2 h-screen bg-[#1F2B3A]/20"
+          className="fixed top-0 z-40 right-0 w-[80%] md:w-1/2 h-screen bg-[#1F2B3A]/20"
           style={{
             clipPath:
               "polygon(100px 0,100% 0,calc(100% + 225px) 100%, 480px 100%)",
@@ -584,101 +584,69 @@ export default function Home() {
             />
           </svg>
         </div>
-      </div>
-      <footer className="px-4 pt-10 pb-18">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between space-y-4 lg:flex-row lg:space-y-0">
-          <div className="flex flex-col items-center space-x-0 space-y-4 lg:flex-row lg:space-x-14 lg:space-y-0">
-            <a href="#">
-              <Image
-                src="/WorqHat TM Logo.png"
-                width={150}
-                height={50}
-                alt="WorqHat Logo"
-              />
-            </a>
+        <footer className="px-4 pt-10 pb-18 bottom-0 absolute z-50">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between space-y-4 lg:flex-row lg:space-y-0">
+            <div className="flex flex-col items-center space-x-0 space-y-4 lg:flex-row lg:space-x-14 lg:space-y-0">
+              <a href="https://worqhat.com">
+                <Image
+                    src="/WorqHat TM Logo.png"
+                    width={150}
+                    height={50}
+                    alt="WorqHat Logo"
+                />
+              </a>
 
-            <div className="flex flex-col space-y-2 text-center text-sm font-semibold lg:flex-row lg:space-x-6 lg:space-y-0 lg:text-left">
-              <span>Copyright &copy; 2023 WorqHat (Winlysis Pvt. Ltd)</span>
-              <a
-                href="https://worqhat.com"
-                target="_blank"
-                className="font-semibold text-text hover:text-heading"
-              >
-                Learn More
-              </a>
-              <a
-                href="https://docs.worqhat.com"
-                target="_blank"
-                className="font-semibold text-text hover:text-heading"
-              >
-                API Docs
-              </a>
-              <a
-                href="https://worqhat.com/terms-of-service"
-                target="_blank"
-                className="font-semibold text-text hover:text-heading"
-              >
-                Terms of Service
-              </a>
-              <a
-                href="https://worqhat.com/privacy-policy"
-                target="_blank"
-                className="font-semibold text-text hover:text-heading"
-              >
-                Privacy Policy
+              <div className="flex flex-col space-y-2 text-center text-sm font-semibold lg:flex-row lg:space-x-6 lg:space-y-0 lg:text-left">
+                <span>Copyright &copy; 2023 WorqHat (Winlysis Pvt. Ltd)</span>
+                <a
+                    href="https://worqhat.com"
+                    target="_blank"
+                    className="font-semibold text-text hover:text-heading"
+                >
+                  Learn More
+                </a>
+                <a
+                    href="https://docs.worqhat.com"
+                    target="_blank"
+                    className="font-semibold text-text hover:text-heading"
+                >
+                  API Docs
+                </a>
+                <a
+                    href="https://worqhat.com/terms-of-service"
+                    target="_blank"
+                    className="font-semibold text-text hover:text-heading"
+                >
+                  Terms of Service
+                </a>
+                <a
+                    href="https://worqhat.com/privacy-policy"
+                    target="_blank"
+                    className="font-semibold text-text hover:text-heading"
+                >
+                  Privacy Policy
+                </a>
+              </div>
+            </div>
+
+            <div className="flex space-x-4">
+              <a href="https://twitter.com/worqhat">
+                <svg viewBox="0 0 32 32" className="h-8 w-8 ml-4">
+                  <path
+                      d="M0 16C0 7.16344 7.16344 0 16 0V0C24.8366 0 32 7.16344 32 16V16C32 24.8366 24.8366 32 16 32V32C7.16344 32 0 24.8366 0 16V16Z"
+                      fill="#1D9BF0"
+                  />
+                  <path
+                      d="M13.072 24.44C20.168 24.44 24.048 18.56 24.048 13.464C24.048 13.296 24.048 13.128 24.04 12.968C24.792 12.424 25.448 11.744 25.968 10.968C25.28 11.272 24.536 11.48 23.752 11.576C24.552 11.096 25.16 10.344 25.448 9.44C24.704 9.88 23.88 10.2 23 10.376C22.296 9.624 21.296 9.16 20.184 9.16C18.056 9.16 16.328 10.888 16.328 13.016C16.328 13.32 16.36 13.616 16.432 13.896C13.224 13.736 10.384 12.2 8.48003 9.864C8.15203 10.432 7.96003 11.096 7.96003 11.8C7.96003 13.136 8.64003 14.32 9.68003 15.008C9.04803 14.992 8.45603 14.816 7.93603 14.528C7.93603 14.544 7.93603 14.56 7.93603 14.576C7.93603 16.448 9.26403 18 11.032 18.36C10.712 18.448 10.368 18.496 10.016 18.496C9.76803 18.496 9.52803 18.472 9.28803 18.424C9.77603 19.96 11.2 21.072 12.888 21.104C11.568 22.136 9.90403 22.752 8.09603 22.752C7.78403 22.752 7.48003 22.736 7.17603 22.696C8.86403 23.8 10.896 24.44 13.072 24.44Z"
+                      fill="white"
+                  />
+                </svg>
               </a>
             </div>
           </div>
+        </footer>
 
-          <div className="flex space-x-4">
-            <a href="#">
-              <svg viewBox="0 0 32 32" className="h-8 w-8">
-                <circle cx="16" cy="16" r="16" fill="white" />
-                <g clipPath="url(#slack_color)">
-                  <path
-                    d="M10.4381 18.499C10.4381 19.6114 9.53905 20.5105 8.42665 20.5105C7.31425 20.5105 6.41522 19.6114 6.41522 18.499C6.41522 17.3867 7.31425 16.4876 8.42672 16.4876H10.438V18.4991L10.4381 18.499ZM11.4438 18.499C11.4438 17.3867 12.3428 16.4876 13.4552 16.4876C14.5676 16.4876 15.4667 17.3867 15.4667 18.4991V23.5276C15.4667 24.64 14.5676 25.5391 13.4552 25.5391C12.3429 25.5391 11.4438 24.64 11.4438 23.5276V18.4991V18.499Z"
-                    fill="#E01E5A"
-                  />
-                  <path
-                    d="M13.4552 10.4228C12.3428 10.4228 11.4437 9.52382 11.4437 8.41142C11.4437 7.29902 12.3429 6.39999 13.4552 6.39999C14.5676 6.39999 15.4667 7.29902 15.4667 8.41142V10.4229H13.4552L13.4552 10.4228ZM13.4552 11.4438C14.5676 11.4438 15.4667 12.3428 15.4667 13.4552C15.4667 14.5676 14.5676 15.4667 13.4552 15.4667H8.41149C7.29902 15.4667 6.39999 14.5676 6.39999 13.4552C6.39999 12.3429 7.29902 11.4438 8.41142 11.4438H13.4552H13.4552Z"
-                    fill="#36C5F0"
-                  />
-                  <path
-                    d="M21.5162 13.4552C21.5162 12.3428 22.4153 11.4437 23.5276 11.4437C24.64 11.4437 25.5391 12.3428 25.5391 13.4552C25.5391 14.5676 24.64 15.4667 23.5276 15.4667H21.5162V13.4552V13.4552ZM20.5105 13.4552C20.5105 14.5676 19.6114 15.4667 18.499 15.4667C17.3867 15.4667 16.4876 14.5676 16.4876 13.4552V8.41149C16.4876 7.29902 17.3867 6.39999 18.499 6.39999C19.6113 6.39999 20.5104 7.29902 20.5104 8.41142V13.4552L20.5105 13.4552Z"
-                    fill="#2EB67D"
-                  />
-                  <path
-                    d="M18.499 21.5162C19.6114 21.5162 20.5105 22.4153 20.5105 23.5276C20.5105 24.64 19.6114 25.5391 18.499 25.5391C17.3867 25.5391 16.4876 24.64 16.4876 23.5276V21.5162H18.4991H18.499ZM18.499 20.5105C17.3867 20.5105 16.4876 19.6114 16.4876 18.499C16.4876 17.3867 17.3867 16.4876 18.4991 16.4876H23.5428C24.6552 16.4876 25.5543 17.3867 25.5543 18.4991C25.5543 19.6114 24.6552 20.5105 23.5428 20.5105H18.4991H18.499Z"
-                    fill="#ECB22E"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="slack_color">
-                    <rect
-                      width="19.2"
-                      height="19.2"
-                      fill="white"
-                      transform="translate(6.39999 6.39999)"
-                    />
-                  </clipPath>
-                </defs>
-              </svg>
-            </a>
-            <a href="#">
-              <svg viewBox="0 0 32 32" className="h-8 w-8">
-                <path
-                  d="M0 16C0 7.16344 7.16344 0 16 0V0C24.8366 0 32 7.16344 32 16V16C32 24.8366 24.8366 32 16 32V32C7.16344 32 0 24.8366 0 16V16Z"
-                  fill="#1D9BF0"
-                />
-                <path
-                  d="M13.072 24.44C20.168 24.44 24.048 18.56 24.048 13.464C24.048 13.296 24.048 13.128 24.04 12.968C24.792 12.424 25.448 11.744 25.968 10.968C25.28 11.272 24.536 11.48 23.752 11.576C24.552 11.096 25.16 10.344 25.448 9.44C24.704 9.88 23.88 10.2 23 10.376C22.296 9.624 21.296 9.16 20.184 9.16C18.056 9.16 16.328 10.888 16.328 13.016C16.328 13.32 16.36 13.616 16.432 13.896C13.224 13.736 10.384 12.2 8.48003 9.864C8.15203 10.432 7.96003 11.096 7.96003 11.8C7.96003 13.136 8.64003 14.32 9.68003 15.008C9.04803 14.992 8.45603 14.816 7.93603 14.528C7.93603 14.544 7.93603 14.56 7.93603 14.576C7.93603 16.448 9.26403 18 11.032 18.36C10.712 18.448 10.368 18.496 10.016 18.496C9.76803 18.496 9.52803 18.472 9.28803 18.424C9.77603 19.96 11.2 21.072 12.888 21.104C11.568 22.136 9.90403 22.752 8.09603 22.752C7.78403 22.752 7.48003 22.736 7.17603 22.696C8.86403 23.8 10.896 24.44 13.072 24.44Z"
-                  fill="white"
-                />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </footer>
+      </div>
     </AnimatePresence>
   );
 }
