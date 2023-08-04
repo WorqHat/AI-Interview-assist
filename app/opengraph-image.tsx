@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+/* The code is importing the `ImageResponse` class from the `next/server` module. It also defines three
+constants: `runtime`, `alt`, and `contentType`. */
 import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
@@ -7,10 +9,15 @@ export const contentType = "image/png";
 
 export default async function OG() {
   // Font
+  /* The code is fetching the font file `JetBrainsMono-Regular.ttf` from the specified URL and converting
+the response into an array buffer. The font file is used later in the code for rendering the image. */
   const JetBrainsMono = await fetch(
     new URL("./fonts/JetBrainsMono-Regular.ttf", import.meta.url),
   ).then((res) => res.arrayBuffer());
 
+  /* The code is creating a new instance of the `ImageResponse` class and returning it. The
+`ImageResponse` class is used to generate an image response that can be used for server-side
+rendering in Next.js. */
   return new ImageResponse(
     (
       <div
