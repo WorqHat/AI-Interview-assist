@@ -1,3 +1,8 @@
+/* The code is importing the global CSS file and the `Metadata` type from the `next` package. The
+global CSS file is used to apply styles to the entire application, while the `Metadata` type is used
+to define metadata for the page, such as the title, description, and images for social media
+sharing. */
+
 import "../styles/globals.css";
 import { Metadata } from "next";
 
