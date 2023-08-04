@@ -1,13 +1,26 @@
+/* The above code is importing the `AnimatePresence` and `motion` components from the `framer-motion`
+library, as well as the `RadioGroup` component from the `@headlessui/react` library. It is also
+using TypeScript and React. */
 import { AnimatePresence, motion } from "framer-motion";
 import { RadioGroup } from "@headlessui/react";
+/* The above code is importing the `uuid` function from the `uuid` library and the `Link` component
+from the `next/link` module. It is also using TypeScript with React. */
 import { v4 as uuid } from "uuid";
 import Link from "next/link";
+/* The above code is a TypeScript React component that imports necessary dependencies and sets up a
+webcam component. It uses the `useRef`, `useState`, `useEffect`, and `useCallback` hooks from React.
+The `Webcam` component is imported from the `react-webcam` library. */
 import { useRef, useState, useEffect, useCallback } from "react";
+/* The above code is a TypeScript React code that imports the necessary dependencies and sets up a
+webcam component and a video processing library called FFmpeg. */
 import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
 dotenv.config();
 
+/* The above code is defining an array of objects called "questions". Each object represents a question
+and contains properties such as id, name, description, and difficulty. The questions array is
+populated with two question objects. */
 const questions = [
   {
     id: 1,
@@ -23,6 +36,10 @@ const questions = [
   },
 ];
 
+/* The above code is defining an array called "interviewers" which contains objects representing
+different interviewers. Each interviewer object has properties such as id, name, description, and
+level. These properties provide information about the interviewers' identities, areas of expertise,
+and levels of experience. */
 const interviewers = [
   {
     id: "Ravi",
@@ -44,6 +61,11 @@ const interviewers = [
   },
 ];
 
+/* The above code is creating an instance of FFmpeg, a popular multimedia framework, in a TypeScript
+React application. It is using the `createFFmpeg` function to create the instance and passing an
+object with configuration options. The `corePath` option specifies the path to the FFmpeg core
+JavaScript file, which can be either a local path or a URL. In this case, it is set to a URL hosted
+on Vercel. The `log` option is set to `true` to enable logging. */
 const ffmpeg = createFFmpeg({
   // corePath: `http://localhost:3000/ffmpeg/dist/ffmpeg-core.js`,
   corePath: `https://ai-interview-assist.vercel.app/ffmpeg/dist/ffmpeg-core.js`,
@@ -51,6 +73,15 @@ const ffmpeg = createFFmpeg({
   // corePath: "https://unpkg.com/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js",
   log: true,
 });
+/**
+ * The `classNames` function takes in an array of strings and returns a single string with all
+ * non-empty strings joined together with a space separator.
+ * @param {string[]} classes - The `classes` parameter is a rest parameter that allows you to pass in
+ * any number of string arguments. These arguments represent the CSS classes that you want to combine
+ * into a single string.
+ * @returns The function `classNames` returns a string that is the concatenation of all the non-empty
+ * strings in the `classes` array, separated by a space.
+ */
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -82,6 +113,8 @@ export default function DemoPage() {
   const [generatedFeedback, setGeneratedFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
+This function takes in a `BlobEvent` object as a parameter. */
   const handleDataAvailable = useCallback(
     ({ data }: BlobEvent) => {
       if (data.size > 0) {
@@ -91,10 +124,17 @@ export default function DemoPage() {
     [setRecordedChunks],
   );
 
+  /* The below code is using the `useEffect` hook in a React component to set the value of `isDesktop`
+state variable based on the width of the window. It checks if the window width is greater than or
+equal to 768 pixels and sets `isDesktop` to `true` if it is, otherwise it sets it to `false`. The
+`useEffect` hook is called only once, when the component is first rendered, as indicated by the
+empty dependency array `[]`. */
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
   }, []);
 
+  /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
+of `videoEnded` changes. */
   useEffect(() => {
     if (videoEnded) {
       const element = document.getElementById("startTimer");
@@ -123,6 +163,8 @@ export default function DemoPage() {
     handleDataAvailable,
   ]);
 
+  /* The above code is a TypeScript React code snippet. It defines a function called
+`handleStartCaptureClick` using the `useCallback` hook. */
   const handleStartCaptureClick = useCallback(() => {
     const startTimer = document.getElementById("startTimer");
     if (startTimer) {
@@ -134,6 +176,11 @@ export default function DemoPage() {
     }
   }, []);
 
+  /* The above code is defining a function called `handleStopCaptureClick` using the `useCallback` hook.
+This function is responsible for stopping the media recording and updating the state variable
+`capturing` to `false`. It checks if the `mediaRecorderRef.current` exists and if it does, it calls
+the `stop()` method on it. The `mediaRecorderRef` and `setCapturing` are dependencies of the
+`useCallback` hook, meaning that if either of them changes, the function will be redefined. */
   const handleStopCaptureClick = useCallback(() => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
@@ -141,6 +188,11 @@ export default function DemoPage() {
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
 
+  /* The above code is a useEffect hook in a TypeScript React component. It sets up a timer that
+decrements the value of `seconds` by 1 every second if `capturing` is true. If `seconds` reaches 0,
+it calls the `handleStopCaptureClick` function, sets `capturing` to false, and resets `seconds` to
+0. The `clearInterval` function is used to clean up the timer when the component unmounts or when
+the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
   useEffect(() => {
     let timer: any = null;
     if (capturing) {
@@ -248,6 +300,11 @@ export default function DemoPage() {
 
           setGeneratedFeedback("");
 
+          /* The above code is making a POST request to the Worqhat API endpoint at
+"https://api.worqhat.com/api/ai/content/v2". It is sending a JSON payload in the request body, which
+includes the training data, a question, randomness value, and content size. The request also
+includes headers with the x-api-key and x-org-key values, which are retrieved from environment
+variables. */
           const url = "https://api.worqhat.com/api/ai/content/v2";
           const options = {
             method: "POST",
@@ -265,6 +322,9 @@ export default function DemoPage() {
             }),
           };
 
+          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
+then waits for the response to be received and converts it to JSON format using the response.json()
+method. */
           const response = await fetch(url, options);
           const data = await response.json();
 
@@ -279,12 +339,18 @@ export default function DemoPage() {
         console.error("Upload failed.");
       }
 
+      /* The above code is using the `setTimeout` function to delay the execution of a callback function. The
+callback function is clearing an array called `recordedChunks` by setting it to an empty array. The
+delay is set to 1500 milliseconds (1.5 seconds). */
       setTimeout(function () {
         setRecordedChunks([]);
       }, 1500);
     }
   };
 
+  /**
+   * The function restarts the video by resetting various state variables.
+   */
   function restartVideo() {
     setRecordedChunks([]);
     setVideoEnded(false);
@@ -293,10 +359,19 @@ export default function DemoPage() {
     setSeconds(150);
   }
 
+  /* The above code is defining the `videoConstraints` object based on the value of the `isDesktop`
+variable. If `isDesktop` is true, the `videoConstraints` object will have a width of 1280, height of
+720, and facing mode set to "user". If `isDesktop` is false, the `videoConstraints` object will have
+a width of 480, height of 640, and facing mode set to "user". */
+
   const videoConstraints = isDesktop
     ? { width: 1280, height: 720, facingMode: "user" }
     : { width: 480, height: 640, facingMode: "user" };
 
+  /**
+   * The function `handleUserMedia` sets the loading state to false and the cameraLoaded state to true
+   * after a delay of 1 second.
+   */
   const handleUserMedia = () => {
     setTimeout(() => {
       setLoading(false);
@@ -505,18 +580,18 @@ export default function DemoPage() {
                                   selectedInterviewer.name === "Ravi"
                                     ? selected.name === "Behavioral"
                                       ? "/interviewers/DemoInterviewMale.mp4"
-                                      : "/interviewers/JohnTechnical.mp4"
+                                      : "/interviewers/RaviTechnical.mp4"
                                     : selectedInterviewer.name === "Amit"
                                     ? selected.name === "Behavioral"
-                                      ? "/interviewers/RichardBehavioral.mp4"
-                                      : "/interviewers/RichardTechnical.mp4"
+                                      ? "/interviewers/AmitBehavioral.mp4"
+                                      : "/interviewers/AmitTechnical.mp4"
                                     : selectedInterviewer.name === "Sunita"
                                     ? selected.name === "Behavioral"
-                                      ? "/interviewers/BehavioralSarah.mp4"
-                                      : "/interviewers/SarahTechnical.mp4"
+                                      ? "/interviewers/BehavioralSunita.mp4"
+                                      : "/interviewers/SunitaTechnical.mp4"
                                     : selected.name === "Behavioral"
                                     ? "/interviewers/DemoInterviewMale.mp4"
-                                    : "/interviewers/JohnTechnical.mp4"
+                                    : "/interviewers/RaviTechnical.mp4"
                                 }
                                 type="video/mp4"
                               />
