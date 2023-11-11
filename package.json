@@ -33,7 +33,7 @@
     "framer-motion": "^10.12.5",
     "next": "13.4.4",
     "node-fetch": "^3.3.2",
-    "openai": "^3.2.1",
+    "openai": "^4.17.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-webcam": "^7.0.1",
