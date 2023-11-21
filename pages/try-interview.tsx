@@ -305,11 +305,15 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
 includes the training data, a question, randomness value, and content size. The request also
 includes headers with the x-api-key and x-org-key values, which are retrieved from environment
 variables. */
-          const url = "https://api.worqhat.com/api/ai/content/v2";
-          const options = {
+
+
+          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
+then waits for the response to be received and converts it to JSON format using the response.json()
+method. */
+          const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
             method: "POST",
             headers: {
-              Authorization: `Bearer sk-b52cc1e8abe5415193c9811419287043`,
+              Authorization: `Bearer sk-b52cc1e8abe5415193c9811419287043`,'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               training_data:
@@ -318,15 +322,8 @@ variables. */
               randomness: 0.2,
 
             }),
-          };
-
-          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
-then waits for the response to be received and converts it to JSON format using the response.json()
-method. */
-          const response = await fetch(url, options);
+          });
           const data = await response.json();
-          console.log(options);
-          console.log(url);
 
           console.log(response);
 
