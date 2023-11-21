@@ -309,9 +309,8 @@ variables. */
           const options = {
             method: "POST",
             headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
-              "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,
+              
             },
             body: JSON.stringify({
               training_data:
