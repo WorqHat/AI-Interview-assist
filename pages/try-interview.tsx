@@ -310,7 +310,7 @@ variables. */
             method: "POST",
             headers: {
               Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,
-              
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               training_data:
