@@ -305,29 +305,30 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
 includes the training data, a question, randomness value, and content size. The request also
 includes headers with the x-api-key and x-org-key values, which are retrieved from environment
 variables. */
-          const url = "https://api.worqhat.com/api/ai/content/v2";
-          const options = {
+
+
+          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
+then waits for the response to be received and converts it to JSON format using the response.json()
+method. */
+          const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
             method: "POST",
             headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
-              "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               training_data:
                 "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
               question: prompt,
               randomness: 0.2,
-              content_size: "small",
-            }),
-          };
 
-          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
-then waits for the response to be received and converts it to JSON format using the response.json()
-method. */
-          const response = await fetch(url, options);
+            }),
+          });
           const data = await response.json();
 
+          console.log(response);
+
+          console.log(data);
+          console.log(data.content);
           if (data.error) {
             console.log(data.error);
           }

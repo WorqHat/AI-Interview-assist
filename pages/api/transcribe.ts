@@ -57,21 +57,26 @@ options for making a POST request to the "https://api.worqhat.com/api/ai/speech-
   const options = {
     method: "POST",
     headers: {
-      "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
-      "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
+      Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,
+      
     },
     body: formData,
   };
 
 /* The code block you provided is using a try-catch statement to handle any errors that may occur
 during the execution of the code. */
-  try {
-    const response = await fetch(url, options);
-    const data = await response.json() as { content: string; };
-    console.log(data.content);
-    res.status(200).json({ transcript: data.content });
+try {
+  const response = await fetch(url, options);
+  const data = await response.json() as { data: { text: string } };
+
+  const transcript = data.data.text;
+
+  console.log(transcript);
+  res.status(200).json({ transcript: transcript });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: error });
   }
+
+
 }
