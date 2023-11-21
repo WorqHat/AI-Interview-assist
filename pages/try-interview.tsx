@@ -313,7 +313,7 @@ method. */
           const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
             method: "POST",
             headers: {
-              Authorization: `Bearer sk-b52cc1e8abe5415193c9811419287043`,'Content-Type': 'application/json'
+              Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               training_data:

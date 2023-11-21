@@ -1,6 +1,6 @@
+require("dotenv").config();
+
 /** @type {import('next').NextConfig} */
-/* The code is defining a Next.js configuration object called `nextConfig`. This object has a property
-`reactStrictMode` set to `true`, which enables strict mode for React. */
 const nextConfig = {
   reactStrictMode: true,
   async headers() {
@@ -19,6 +19,9 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  env: {
+    WORQHAT_API_KEY: process.env.WORQHAT_API_KEY,
   },
 };
 
