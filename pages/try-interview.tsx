@@ -309,15 +309,14 @@ variables. */
           const options = {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${process.env.WORQHAT_API_KEY as string}`,
-              'Content-Type': 'application/json'
+              Authorization: `Bearer sk-b52cc1e8abe5415193c9811419287043`,
             },
             body: JSON.stringify({
               training_data:
                 "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
               question: prompt,
               randomness: 0.2,
-              content_size: "small",
+
             }),
           };
 
@@ -326,7 +325,13 @@ then waits for the response to be received and converts it to JSON format using 
 method. */
           const response = await fetch(url, options);
           const data = await response.json();
+          console.log(options);
+          console.log(url);
 
+          console.log(response);
+
+          console.log(data);
+          console.log(data.content);
           if (data.error) {
             console.log(data.error);
           }
