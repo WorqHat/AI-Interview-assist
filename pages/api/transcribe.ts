@@ -26,6 +26,8 @@ export const config = {
 export default async function handler(req: any, res: any) {
   // Here, we create a temporary file to store the audio file using Vercel's tmp directory
   // As we compressed the file and are limiting recordings to 2.5 minutes, we won't run into trouble with storage capacity
+  console.log("Request received");
+
   const fData = await new Promise<{ fields: any; files: any }>(
     (resolve, reject) => {
       const form = new IncomingForm({
@@ -40,7 +42,7 @@ export default async function handler(req: any, res: any) {
     },
   );
 
-/* The code block you provided is responsible for creating a `FormData` object and configuring the
+  /* The code block you provided is responsible for creating a `FormData` object and configuring the
 options for making a POST request to the "https://api.worqhat.com/api/ai/speech-text" endpoint. */
   const videoFile = fData.files.file;
   const videoFilePath = videoFile?.filepath;
@@ -51,25 +53,27 @@ options for making a POST request to the "https://api.worqhat.com/api/ai/speech-
   const formData = new FormData();
   formData.append("audio", file);
 
-/* The code block you provided is configuring the options for making a POST request to the
+  /* The code block you provided is configuring the options for making a POST request to the
 "https://api.worqhat.com/api/ai/speech-text" endpoint. */
   const url = "https://api.worqhat.com/api/ai/speech-text";
   const options = {
     method: "POST",
     headers: {
-      "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
-      "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
+      Authorization: process.env.WORQHAT_API_KEY as string,
     },
     body: formData,
   };
 
-/* The code block you provided is using a try-catch statement to handle any errors that may occur
+  /* The code block you provided is using a try-catch statement to handle any errors that may occur
 during the execution of the code. */
   try {
     const response = await fetch(url, options);
-    const data = await response.json() as { content: string; };
-    console.log(data.content);
-    res.status(200).json({ transcript: data.content });
+    const data = (await response.json()) as { data: { text: string } };
+
+    const transcript = data.data.text;
+
+    console.log(transcript);
+    res.status(200).json({ transcript: transcript });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: error });

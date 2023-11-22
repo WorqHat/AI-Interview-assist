@@ -303,14 +303,16 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
           /* The above code is making a POST request to the Worqhat API endpoint at
 "https://api.worqhat.com/api/ai/content/v2". It is sending a JSON payload in the request body, which
 includes the training data, a question, randomness value, and content size. The request also
-includes headers with the x-api-key and x-org-key values, which are retrieved from environment
+includes headers with the authorization values, which are retrieved from environment
 variables. */
-          const url = "https://api.worqhat.com/api/ai/content/v2";
-          const options = {
+
+          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
+then waits for the response to be received and converts it to JSON format using the response.json()
+method. */
+          const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
             method: "POST",
             headers: {
-              "x-api-key": process.env.NEXT_PUBLIC_X_API_KEY as string,
-              "x-org-key": process.env.NEXT_PUBLIC_X_ORG_KEY as string,
+              Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -318,14 +320,9 @@ variables. */
                 "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
               question: prompt,
               randomness: 0.2,
-              content_size: "small",
-            }),
-          };
 
-          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
-then waits for the response to be received and converts it to JSON format using the response.json()
-method. */
-          const response = await fetch(url, options);
+            }),
+          });
           const data = await response.json();
 
           if (data.error) {
