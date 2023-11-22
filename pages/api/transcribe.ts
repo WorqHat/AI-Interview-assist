@@ -54,12 +54,14 @@ options for making a POST request to the "https://api.worqhat.com/api/ai/speech-
   formData.append("audio", file);
 
   /* The code block you provided is configuring the options for making a POST request to the
-"https://api.worqhat.com/api/ai/speech-text" endpoint. */
+"https://api.worqhat.com/api/ai/speech-text" endpoint.
+Over here we have hardcoded the user's API key. This is not a good practice as it exposes the API key. We generally suggest users to Store API keys in environment variables and load them into your code using the `dotenv` package.
+*/
   const url = "https://api.worqhat.com/api/ai/speech-text";
   const options = {
     method: "POST",
     headers: {
-      Authorization: process.env.WORQHAT_API_KEY as string,
+      Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
     },
     body: formData,
   };
