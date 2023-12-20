@@ -17,7 +17,8 @@ import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
 dotenv.config();
-
+import fs from "fs";
+import path from "path";
 /* The above code is defining an array of objects called "questions". Each object represents a question
 and contains properties such as id, name, description, and difficulty. The questions array is
 populated with two question objects. */
@@ -132,11 +133,27 @@ empty dependency array `[]`. */
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
   }, []);
+  
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
   useEffect(() => {
-    if (videoEnded) {
+const captureRandomFrame = async () => {
+      try {
+        // Make an API request to the captureRandomFrame endpoint
+        const response = await fetch('/api/captureRandomFrame');
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('Random frame captured successfully');
+        } else {
+          console.error('Failed to capture random frame:', data.error || 'Unknown error');
+        }
+      } catch (error) {
+        console.error('Error capturing random frame:', error);
+      }
+    };
+        if (videoEnded) {
       const element = document.getElementById("startTimer");
 
       if (element) {
@@ -154,6 +171,7 @@ of `videoEnded` changes. */
         handleDataAvailable,
       );
       mediaRecorderRef.current.start();
+      captureRandomFrame();
     }
   }, [
     videoEnded,
