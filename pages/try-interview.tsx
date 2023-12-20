@@ -138,40 +138,52 @@ empty dependency array `[]`. */
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
   useEffect(() => {
-const captureRandomFrame = async () => {
+    const captureRandomFrame = async () => {
       try {
         // Make an API request to the captureRandomFrame endpoint
-        const response = await fetch('/api/captureRandomFrame');
+        const response = await fetch("/api/captureRandomFrame");
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Random frame captured successfully');
+          console.log("Random frame captured successfully");
         } else {
-          console.error('Failed to capture random frame:', data.error || 'Unknown error');
+          console.error(
+            "Failed to capture random frame:",
+            data.error || "Unknown error",
+          );
         }
       } catch (error) {
-        console.error('Error capturing random frame:', error);
+        console.error("Error capturing random frame:", error);
       }
     };
-        if (videoEnded) {
-      const element = document.getElementById("startTimer");
 
-      if (element) {
-        element.style.display = "flex";
+    if (videoEnded && webcamRef?.current) {
+      console.log("Capturing random frame...");
+
+      // Access the video element within the Webcam component
+      const videoElement = webcamRef.current.video;
+
+      // Check if the video element is loaded and playing
+      if (videoElement && !videoElement.paused) {
+        // ... (other code)
+
+        setCapturing(true);
+        setIsVisible(false);
+
+        mediaRecorderRef.current = new MediaRecorder(
+          webcamRef.current.stream as MediaStream,
+        );
+        mediaRecorderRef.current.addEventListener(
+          "dataavailable",
+          handleDataAvailable,
+        );
+        mediaRecorderRef.current.start();
+
+        // Add a delay before capturing the random frame
+        setTimeout(() => {
+          captureRandomFrame();
+        }, 2000); // 2-second delay
       }
-
-      setCapturing(true);
-      setIsVisible(false);
-
-      mediaRecorderRef.current = new MediaRecorder(
-        webcamRef?.current?.stream as MediaStream,
-      );
-      mediaRecorderRef.current.addEventListener(
-        "dataavailable",
-        handleDataAvailable,
-      );
-      mediaRecorderRef.current.start();
-      captureRandomFrame();
     }
   }, [
     videoEnded,
@@ -180,6 +192,7 @@ const captureRandomFrame = async () => {
     mediaRecorderRef,
     handleDataAvailable,
   ]);
+
 
   /* The above code is a TypeScript React code snippet. It defines a function called
 `handleStartCaptureClick` using the `useCallback` hook. */

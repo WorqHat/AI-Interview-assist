@@ -1,14 +1,9 @@
-// pages/api/captureRandomFrame.ts
-
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Assuming you have access to webcamRef and videoEnded from the client-side
-
-    // Example logic to capture a random frame and save it to /tmp folder
     const { webcamRef, videoEnded } = req.body;
 
     if (!webcamRef || !videoEnded) {
@@ -20,6 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Check if the video element is loaded and playing
     if (videoElement && !videoElement.paused) {
+      // Delay the capture by 2 seconds
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Capture a frame from the current video time
       const canvas = document.createElement('canvas');
       canvas.width = videoElement.videoWidth;
@@ -32,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Generate a unique filename for the captured frame
         const fileName = `random_frame_${Date.now()}.png`;
-        const filePath = path.join('/tmp', fileName);
+        const filePath = path.join(process.cwd(), 'public', fileName);
 
         // Convert the canvas content to a data URL and save it as an image file
         const dataUrl = canvas.toDataURL('image/png');
@@ -42,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('Random frame captured and saved:', filePath);
 
         // Send a response indicating success
-        res.status(200).json({ success: true });
+        res.status(200).json({ success: true, imagePath: `/public/${fileName}` });
       } else {
         return res.status(500).json({ error: 'Canvas context is null' });
       }
