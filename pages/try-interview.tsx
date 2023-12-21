@@ -138,55 +138,95 @@ empty dependency array `[]`. */
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
   }, []);
+
   const handleCaptureFromCamera = async () => {
     try {
       const constraints = { video: true };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      const videoTrack = stream.getVideoTracks()[0];
-
-      const video = document.createElement("video");
-      video.srcObject = new MediaStream([videoTrack]);
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new (window as any).ImageCapture(track);
 
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const canvas = document.createElement("canvas");
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-      const context = canvas.getContext("2d");
+      const photoBlob = await imageCapture.takePhoto();
 
-      if (context) {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      console.log(photoBlob);
 
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            const formData = new FormData();
-            formData.append("image", blob);
-            formData.append("question", "Describe the image of a person");
-            formData.append("output_type", "text")
+      const formData = new FormData();
+      formData.append("image", photoBlob);
+      formData.append("question", "Describe the image");
+      formData.append("output_type", "text")
+      console.log(formData);
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer sk-5922ba07cff041daa43eb67230341c38",
+        },
+        body: formData,
+      };
 
-            const options = {
-              method: "POST",
-              headers: {
-                Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-              },
-              body: formData,
-            };
+      const response = await fetch(
+        "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+        options,
+      );
+      const data = await response.json();
 
-            const response = await fetch(
-              "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-              options,
-            );
-            const data = await response.json();
-
-            console.log("Image Analysis Response:", data);
-          }
-        }, "image/jpeg");
-      }
+      console.log("Image Analysis Response:", data);
     } catch (error) {
       console.error("Error capturing image from camera:", error);
     }
   };
+  
+  // const handleCaptureFromCamera = async () => {
+  //   try {
+  //     const constraints = { video: true };
+  //     const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+  //     const videoTrack = stream.getVideoTracks()[0];
+
+  //     const video = document.createElement("video");
+  //     video.srcObject = new MediaStream([videoTrack]);
+
+  //     await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  //     const canvas = document.createElement("canvas");
+  //     canvas.width = video.videoWidth || 640;
+  //     canvas.height = video.videoHeight || 480;
+  //     const context = canvas.getContext("2d");
+
+  //     if (context) {
+  //       context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  //       canvas.toBlob(async (blob) => {
+  //         if (blob) {
+  //           const formData = new FormData();
+  //           formData.append("image", blob);
+  //           formData.append("question", "Describe the image of a person");
+  //           formData.append("output_type", "text")
+
+  //           const options = {
+  //             method: "POST",
+  //             headers: {
+  //               Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+  //             },
+  //             body: formData,
+  //           };
+
+  //           const response = await fetch(
+  //             "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+  //             options,
+  //           );
+  //           const data = await response.json();
+
+  //           console.log("Image Analysis Response:", data);
+  //         }
+  //       }, "image/jpeg");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error capturing image from camera:", error);
+  //   }
+  // };
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
