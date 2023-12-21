@@ -88,6 +88,9 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+
+
+
 export default function DemoPage() {
   const [selected, setSelected] = useState(questions[0]);
   const [selectedInterviewer, setSelectedInterviewer] = useState(
@@ -135,60 +138,55 @@ empty dependency array `[]`. */
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 768);
   }, []);
-  
- const handleCaptureFromCamera = async () => {
-   try {
-     const constraints = { video: true };
+  const handleCaptureFromCamera = async () => {
+    try {
+      const constraints = { video: true };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-     const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const videoTrack = stream.getVideoTracks()[0];
 
-     if (videoRef.current) {
-       videoRef.current.srcObject = stream;
-       videoRef.current.play();
+      const video = document.createElement("video");
+      video.srcObject = new MediaStream([videoTrack]);
 
-       // Wait for a few seconds to allow the user to adjust the camera if needed
-       await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
-       // Capture a frame from the video
-       const canvas = document.createElement("canvas");
-       const context = canvas.getContext("2d");
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      const context = canvas.getContext("2d");
 
-       if (context && videoRef.current) {
-         canvas.width = videoRef.current.videoWidth;
-         canvas.height = videoRef.current.videoHeight;
-         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-         // Convert the canvas content to a Blob (image file)
-         canvas.toBlob(async (blob) => {
-           if (blob) {
-             const formData = new FormData();
-             formData.append("image", blob);
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            const formData = new FormData();
+            formData.append("image", blob);
             formData.append("question", "Describe the image of a person");
-            formData.append("output_type", "text");
-             const options = {
-               method: "POST",
-               headers: {
-                 Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-               },
-               body: formData,
-             };
+            formData.append("output_type", "text")
 
-             const response = await fetch(
-               "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-               options,
-             );
-             const data = await response.json();
+            const options = {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+              },
+              body: formData,
+            };
 
-             console.log("Image Analysis Response:", data);
-           }
-         }, "image/jpeg");
-       }
-     }
-   } catch (error) {
-     console.error("Error capturing image from camera:", error);
-   }
- };
+            const response = await fetch(
+              "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+              options,
+            );
+            const data = await response.json();
 
+            console.log("Image Analysis Response:", data);
+          }
+        }, "image/jpeg");
+      }
+    } catch (error) {
+      console.error("Error capturing image from camera:", error);
+    }
+  };
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
@@ -808,10 +806,10 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     )}
                                   </span>
                                 </button>
-                                <video
+                                {/* <video
                                   ref={videoRef}
-                                  style={{ width: "100%", height: "auto" }}
-                                />
+                                  style={{ width: "auto", height: "auto" }}
+                                /> */}
                                 <button onClick={handleCaptureFromCamera}>
                                   Capture Image from Camera
                                 </button>
