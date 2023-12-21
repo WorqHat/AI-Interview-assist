@@ -114,6 +114,8 @@ export default function DemoPage() {
   const [generatedFeedback, setGeneratedFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
 This function takes in a `BlobEvent` object as a parameter. */
   const handleDataAvailable = useCallback(
@@ -134,39 +136,58 @@ empty dependency array `[]`. */
     setIsDesktop(window.innerWidth >= 768);
   }, []);
   
-  const handleImageAnalysis = async () => {
-    try {
-      const imageInput = document.getElementById(
-        "imageInput",
-      ) as HTMLInputElement;
+ const handleCaptureFromCamera = async () => {
+   try {
+     const constraints = { video: true };
 
-      if (imageInput && imageInput.files && imageInput.files.length > 0) {
-        const imageFile = imageInput.files[0];
-        const formData = new FormData();
-        formData.append("image", imageFile);
+     const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-        const options = {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-          },
-          body: formData,
-        };
+     if (videoRef.current) {
+       videoRef.current.srcObject = stream;
+       videoRef.current.play();
 
-        const response = await fetch(
-          "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-          options,
-        );
-        const data = await response.json();
+       // Wait for a few seconds to allow the user to adjust the camera if needed
+       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-        console.log("Image Analysis Response:", data);
-      } else {
-        console.error("No image selected");
-      }
-    } catch (error) {
-      console.error("Error performing image analysis:", error);
-    }
-  };
+       // Capture a frame from the video
+       const canvas = document.createElement("canvas");
+       const context = canvas.getContext("2d");
+
+       if (context && videoRef.current) {
+         canvas.width = videoRef.current.videoWidth;
+         canvas.height = videoRef.current.videoHeight;
+         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+         // Convert the canvas content to a Blob (image file)
+         canvas.toBlob(async (blob) => {
+           if (blob) {
+             const formData = new FormData();
+             formData.append("image", blob);
+            formData.append("question", "Describe the image of a person");
+            formData.append("output_type", "text");
+             const options = {
+               method: "POST",
+               headers: {
+                 Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+               },
+               body: formData,
+             };
+
+             const response = await fetch(
+               "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+               options,
+             );
+             const data = await response.json();
+
+             console.log("Image Analysis Response:", data);
+           }
+         }, "image/jpeg");
+       }
+     }
+   } catch (error) {
+     console.error("Error capturing image from camera:", error);
+   }
+ };
 
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
@@ -787,13 +808,12 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     )}
                                   </span>
                                 </button>
-                                <input
-                                  type="file"
-                                  id="imageInput"
-                                  accept="image/*"
+                                <video
+                                  ref={videoRef}
+                                  style={{ width: "100%", height: "auto" }}
                                 />
-                                <button onClick={handleImageAnalysis}>
-                                  Perform Image Analysis
+                                <button onClick={handleCaptureFromCamera}>
+                                  Capture Image from Camera
                                 </button>
                               </div>
                             )}
