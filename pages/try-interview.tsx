@@ -134,6 +134,40 @@ empty dependency array `[]`. */
     setIsDesktop(window.innerWidth >= 768);
   }, []);
   
+  const handleImageAnalysis = async () => {
+    try {
+      const imageInput = document.getElementById(
+        "imageInput",
+      ) as HTMLInputElement;
+
+      if (imageInput && imageInput.files && imageInput.files.length > 0) {
+        const imageFile = imageInput.files[0];
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        const options = {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+          },
+          body: formData,
+        };
+
+        const response = await fetch(
+          "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+          options,
+        );
+        const data = await response.json();
+
+        console.log("Image Analysis Response:", data);
+      } else {
+        console.error("No image selected");
+      }
+    } catch (error) {
+      console.error("Error performing image analysis:", error);
+    }
+  };
+
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
@@ -727,6 +761,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     ) : (
                                       <div className="flex items-center justify-center gap-x-2">
                                         <span>Process transcript</span>
+
                                         <svg
                                           className="w-5 h-5"
                                           viewBox="0 0 24 24"
@@ -751,6 +786,14 @@ a width of 480, height of 640, and facing mode set to "user". */
                                       </div>
                                     )}
                                   </span>
+                                </button>
+                                <input
+                                  type="file"
+                                  id="imageInput"
+                                  accept="image/*"
+                                />
+                                <button onClick={handleImageAnalysis}>
+                                  Perform Image Analysis
                                 </button>
                               </div>
                             )}
