@@ -155,13 +155,13 @@ empty dependency array `[]`. */
 
       const formData = new FormData();
       formData.append("image", photoBlob);
-      formData.append("question", "Describe the image");
+      formData.append("question", "Tell me person in the image is professionally dressed or not?");
       formData.append("output_type", "text")
       console.log(formData);
       const options = {
         method: "POST",
         headers: {
-          Authorization: "Bearer sk-5922ba07cff041daa43eb67230341c38",
+          Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
         },
         body: formData,
       };
