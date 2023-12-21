@@ -177,88 +177,17 @@ empty dependency array `[]`. */
       console.error("Error capturing image from camera:", error);
     }
   };
-  
-  // const handleCaptureFromCamera = async () => {
-  //   try {
-  //     const constraints = { video: true };
-  //     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-  //     const videoTrack = stream.getVideoTracks()[0];
-
-  //     const video = document.createElement("video");
-  //     video.srcObject = new MediaStream([videoTrack]);
-
-  //     await new Promise((resolve) => setTimeout(resolve, 3000));
-
-  //     const canvas = document.createElement("canvas");
-  //     canvas.width = video.videoWidth || 640;
-  //     canvas.height = video.videoHeight || 480;
-  //     const context = canvas.getContext("2d");
-
-  //     if (context) {
-  //       context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  //       canvas.toBlob(async (blob) => {
-  //         if (blob) {
-  //           const formData = new FormData();
-  //           formData.append("image", blob);
-  //           formData.append("question", "Describe the image of a person");
-  //           formData.append("output_type", "text")
-
-  //           const options = {
-  //             method: "POST",
-  //             headers: {
-  //               Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-  //             },
-  //             body: formData,
-  //           };
-
-  //           const response = await fetch(
-  //             "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-  //             options,
-  //           );
-  //           const data = await response.json();
-
-  //           console.log("Image Analysis Response:", data);
-  //         }
-  //       }, "image/jpeg");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error capturing image from camera:", error);
-  //   }
-  // };
 
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
   useEffect(() => {
-    const captureRandomFrame = async () => {
-      try {
-        // Make an API request to the captureRandomFrame endpoint
-        const response = await fetch("/api/captureRandomFrame");
-        const data = await response.json();
-
-        if (response.ok) {
-          console.log("Random frame captured successfully");
-        } else {
-          console.error(
-            "Failed to capture random frame:",
-            data.error || "Unknown error",
-          );
-        }
-      } catch (error) {
-        console.error("Error capturing random frame:", error);
-      }
-    };
-
     if (videoEnded && webcamRef?.current) {
       console.log("Capturing random frame...");
 
       // Access the video element within the Webcam component
       const videoElement = webcamRef.current.video;
 
-      // Check if the video element is loaded and playing
       if (videoElement && !videoElement.paused) {
-        // ... (other code)
 
         setCapturing(true);
         setIsVisible(false);
@@ -271,11 +200,6 @@ of `videoEnded` changes. */
           handleDataAvailable,
         );
         mediaRecorderRef.current.start();
-
-        // Add a delay before capturing the random frame
-        setTimeout(() => {
-          captureRandomFrame();
-        }, 2000); // 2-second delay
       }
     }
   }, [
