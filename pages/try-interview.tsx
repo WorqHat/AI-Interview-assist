@@ -115,6 +115,7 @@ export default function DemoPage() {
   const [completed, setCompleted] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [generatedFeedback, setGeneratedFeedback] = useState("");
+  const [generatedAnalysis, setGeneratedAnalysis] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -151,13 +152,13 @@ empty dependency array `[]`. */
 
       const photoBlob = await imageCapture.takePhoto();
 
-      console.log(photoBlob);
+      // console.log(photoBlob);
 
       const formData = new FormData();
       formData.append("image", photoBlob);
-      formData.append("question", "Tell me person in the image is professionally dressed or not?");
+      formData.append("question", "Analyze interview setup from the image");
       formData.append("output_type", "text")
-      console.log(formData);
+      // console.log(formData);
       const options = {
         method: "POST",
         headers: {
@@ -165,14 +166,15 @@ empty dependency array `[]`. */
         },
         body: formData,
       };
-
-      const response = await fetch(
-        "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-        options,
-      );
-      const data = await response.json();
-
-      console.log("Image Analysis Response:", data);
+// Uncomment for release--------------------------------------------
+      // const response = await fetch(
+      //   "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+      //   options,
+      // );
+      // const data = await response.json();
+      //  console.log("Image Analysis Response:", data);
+      // ----------------------------------------------------------------
+      setGeneratedAnalysis("Interview Setup Analysis");
     } catch (error) {
       console.error("Error capturing image from camera:", error);
     }
@@ -182,7 +184,7 @@ empty dependency array `[]`. */
 of `videoEnded` changes. */
   useEffect(() => {
     if (videoEnded && webcamRef?.current) {
-      console.log("Capturing random frame...");
+      // console.log("Capturing random frame...");
 
       // Access the video element within the Webcam component
       const videoElement = webcamRef.current.video;
@@ -214,6 +216,8 @@ of `videoEnded` changes. */
   /* The above code is a TypeScript React code snippet. It defines a function called
 `handleStartCaptureClick` using the `useCallback` hook. */
   const handleStartCaptureClick = useCallback(() => {
+    console.log("testing");
+    handleCaptureFromCamera();
     const startTimer = document.getElementById("startTimer");
     if (startTimer) {
       startTimer.style.display = "none";
@@ -357,28 +361,34 @@ variables. */
           /* The above code is making an asynchronous request to a specified URL using the fetch function. It
 then waits for the response to be received and converts it to JSON format using the response.json()
 method. */
-          const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              training_data:
-                "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
-              question: prompt,
-              randomness: 0.2,
 
-            }),
-          });
-          const data = await response.json();
 
-          if (data.error) {
-            console.log(data.error);
-          }
+// ---------------------------------------------------------------------Uncomment for release---------------------------------------------------------------------
+          // const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
+          //   method: "POST",
+          //   headers: {
+          //     Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({
+          //     training_data:
+          //       "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
+          //     question: prompt,
+          //     randomness: 0.2,
 
+          //   }),
+          // });
+          // const data = await response.json();
+
+          // if (data.error) {
+          //   console.log(data.error);
+          // }
+
+          // setIsLoading(false);
+          // setGeneratedFeedback(data.content);
+          // ----------------------------------------------------------------------------------------------------------------------------
           setIsLoading(false);
-          setGeneratedFeedback(data.content);
+          setGeneratedFeedback("Feedback for candidate");
         }
       } else {
         console.error("Upload failed.");
@@ -538,7 +548,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                 </div>
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    Feedback
+                    Feedback about Candidate's Knowledge
                   </h2>
                   <div className="mt-4 feedbackText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
                     <p className="prose prose-sm max-w-none">
@@ -548,6 +558,21 @@ a width of 480, height of 640, and facing mode set to "user". */
                         </div>
                       )}
                       {!isLoading && <p>{generatedFeedback}</p>}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
+                    Feedback about interview setup
+                  </h2>
+                  <div className="mt-4 AnalysisText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
+                    <p className="prose prose-sm max-w-none">
+                      {isLoading && (
+                        <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-900 bg-opacity-50">
+                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+                        </div>
+                      )}
+                      {!isLoading && <p>{generatedAnalysis}</p>}
                     </p>
                   </div>
                 </div>
@@ -774,9 +799,9 @@ a width of 480, height of 640, and facing mode set to "user". */
                                   ref={videoRef}
                                   style={{ width: "auto", height: "auto" }}
                                 /> */}
-                                <button onClick={handleCaptureFromCamera}>
+                                {/* <button onClick={handleCaptureFromCamera}>
                                   Capture Image from Camera
-                                </button>
+                                </button> */}
                               </div>
                             )}
                           </>
