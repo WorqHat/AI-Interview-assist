@@ -156,7 +156,7 @@ empty dependency array `[]`. */
 
       const formData = new FormData();
       formData.append("image", photoBlob);
-      formData.append("question", "Analyze interview setup from the image");
+      formData.append("question", "tell me about general interview setup from the image");
       formData.append("output_type", "text")
       // console.log(formData);
       const options = {
@@ -167,12 +167,12 @@ empty dependency array `[]`. */
         body: formData,
       };
 // Uncomment for release--------------------------------------------
-      // const response = await fetch(
-      //   "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-      //   options,
-      // );
-      // const data = await response.json();
-      //  console.log("Image Analysis Response:", data);
+      const response = await fetch(
+        "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+        options,
+      );
+      const data = await response.json();
+       console.log("Image Analysis Response:", data);
       // ----------------------------------------------------------------
       setGeneratedAnalysis("Interview Setup Analysis");
     } catch (error) {
