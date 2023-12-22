@@ -8,37 +8,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { gradient } from "@/components/Gradient";
 import { useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import passport from "passport";
 
 export default function Home() {
   useEffect(() => {
     gradient.initGradient("#gradient-canvas");
   }, []);
-
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = async () => {
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        router.push("/try-interview");
-      } else {
-        const data = await response.json();
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-    }
-  };
-
 
   return (
     <AnimatePresence>
@@ -151,22 +125,6 @@ export default function Home() {
                 ease: [0.075, 0.82, 0.965, 1],
               }}
             >
-              <div>
-        <input
-          type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button onClick={handleLogin}>Login</button>
-      </div>
-
               <Link
                 href="/try-interview"
                 className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#f5f7f9] text-[#1E2B3A] no-underline active:scale-95 scale-100 duration-75"
