@@ -87,7 +87,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function DemoPage() {
+const Interview: React.FC = () => {
   const [selected, setSelected] = useState(questions[0]);
   const [selectedInterviewer, setSelectedInterviewer] = useState(
     interviewers[0],
@@ -2071,3 +2071,5 @@ a width of 480, height of 640, and facing mode set to "user". */
     </AnimatePresence>
   );
 }
+
+export default Interview;

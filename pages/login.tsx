@@ -1,35 +1,67 @@
 // Login.tsx
 import React, { useState } from 'react';
 import axios from 'axios';
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from 'next/router';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const formData = new FormData();
+  formData.append("username", username);
+  formData.append("password", password);
+  const router = useRouter();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/login', { username, password });
-      console.log('Login successful!', response.data);
+      const response = await fetch('/api/login',{ method:"POST", body:formData});
+      console.log('Login successful!', response);
+      router.push('/try-interview');
     } catch (error:any) {
-      console.error('Login failed:', error.response.data.message);
+      console.error('Login failed:', error);
     }
   };
 
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
+ return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white p-8 shadow-md rounded-md w-96">
+        <Image
+                  src="/WorqHat TM Logo.png"
+                  width={150}
+                  height={50}
+                  alt="WorqHat Logo"
+                  
+                />
+        <h2 className="text-2xl font-semibold mb-6">Login</h2>
+        <div className="mb-4">
+          <input
+            className="w-full p-2 border rounded-md"
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <div className="mb-4">
+          <input
+            className="w-full p-2 border rounded-md"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        {/* <Link href="/try-interview"> */}
+        <button
+          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
+        {/* </Link> */}
+        
+      </div>
     </div>
   );
 };

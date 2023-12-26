@@ -1,79 +1,76 @@
 // server.ts
-import express from "express";
-import session from "express-session";
 import passport from "passport";
-// import LocalStrategy from "passport-local";
-import bcrypt from "bcrypt";
-import { Strategy as LocalStrategy } from "passport-local";
+import passportLocal from "passport-local";
+// import { User, UserType } from '../models/User';
+import { Request, Response, NextFunction } from "express";
+const LocalStrategy = passportLocal.Strategy;
 
-const app = express();
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(
-  session({
-    secret: "your-secret-key",
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Mock user for demonstration purposes
-const users = [
-  {
-    id: "1",
-    username: "testuser",
-    password: "$2b$10$Lih1z...",
-  },
-];
-
-passport.use(
-  new LocalStrategy((username: string, password: string, done: any) => {
-    const user = users.find((u) => u.username === username);
-
-    if (!user) {
-      return done(null, false, { message: "Incorrect username." });
-    }
-
-    if (!bcrypt.compareSync(password, user.password)) {
-      return done(null, false, { message: "Incorrect password." });
-    }
-
-    return done(null, user);
-  }),
-);
-
+// Mock user data (replace this with a database)
+const users = [{ id: 1, username: "testuser", password: "password" }];
+// Serialize and deserialize user
 passport.serializeUser((user: any, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((id: string, done) => {
+passport.deserializeUser((id, done) => {
   const user = users.find((u) => u.id === id);
   done(null, user);
 });
 
-// Routes
-app.post("/login", passport.authenticate("local"), (req, res) => {
-  res.json(req.user);
-});
-
-app.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).send("Error logging out");
+// // Passport local strategy
+// passport.use(
+//   new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+//     users.findOne(
+//       { email: email.toLowerCase() },
+//       (err: any, user: Document) => {
+//         if (err) {
+//           return done(err);
+//         }
+//         if (!user) {
+//           return done(undefined, false, {
+//             message: `Email ${email} not found.`,
+//           });
+//         }
+//         user.comparePassword(password, (err: Error, isMatch: boolean) => {
+//           if (err) {
+//             return done(err);
+//           }
+//           if (isMatch) {
+//             return done(undefined, user);
+//           }
+//           return done(undefined, false, {
+//             message: "Invalid email or password.",
+//           });
+//         });
+//       },
+//     );
+//   }),
+// );
+passport.use(
+  new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
+    const user = users.find((u) => u.username === email.toLowerCase());
+    if (!user) {
+      return done(undefined, false, { message: `Email ${email} not found.` });
     }
-    res.send("Logged out");
-  });
-});
 
-app.get("/user", (req, res) => {
-  res.json(req.user);
-});
+    if (user.password !== password) {
+      return done(undefined, false, { message: "Invalid email or password." });
+    }
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+    return done(undefined, user);
+  }),
+);
+
+// Authentication middleware
+export const isAuthenticated = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/login");
+};
+
+// https://github.com/microsoft/TypeScript-Node-Starter/blob/master/src/controllers/user.ts

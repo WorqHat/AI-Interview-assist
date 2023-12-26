@@ -36,6 +36,7 @@
     "firebase": "^10.7.1",
     "formidable": "^2.1.1",
     "framer-motion": "^10.12.5",
+    "lodash": "^4.17.21",
     "next": "13.4.4",
     "node-fetch": "^3.3.2",
     "openai": "^3.2.1",
@@ -43,6 +44,7 @@
     "passport-local": "^1.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-router-dom": "^6.21.1",
     "react-webcam": "^7.0.1",
     "typescript": "5.0.4",
     "uuidv4": "^6.2.13"
