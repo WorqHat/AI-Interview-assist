@@ -1,6 +1,5 @@
 // Login.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from 'next/router';
@@ -14,14 +13,27 @@ const Login: React.FC = () => {
   const router = useRouter();
 
   const handleLogin = async () => {
-    try {
-      const response = await fetch('/api/login',{ method:"POST", body:formData});
-      console.log('Login successful!', response);
+  try {
+    const response = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      console.log('Login successful!');
       router.push('/try-interview');
-    } catch (error:any) {
-      console.error('Login failed:', error);
+    } else {
+      const errorData = await response.json();
+      console.error('Login failed:', errorData.error);
     }
-  };
+  } catch (error: any) {
+    console.error('Login failed:', error);
+  }
+};
+
 
  return (
     <div className="min-h-screen flex items-center justify-center">
