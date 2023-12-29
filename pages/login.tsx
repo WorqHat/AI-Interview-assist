@@ -13,30 +13,36 @@ const Login: React.FC = () => {
   formData.append('password', password);
   const router = useRouter();
 
-  const handleAction = async () => {
-    
-      // Handle login logic
-      try {
-        const response = await fetch('/api/passport', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ username, password, isSignUpMode }),
-        });
+  const isUsernameValid = /^[a-zA-Z0-9_-]{3,16}$/.test(username);
+  const isPasswordValid = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/.test(password);
 
-        if (response.ok) {
-          console.log('Login successful!');
-          router.push('/try-interview');
-        } else {
-          const errorData = await response.json();
-          setError(errorData.message);
-        }
-      } catch (error: any) {
-        console.error('Login failed:', error);
-        setError('An unexpected error occurred.');
+  const handleAction = async () => {
+    if (!isUsernameValid || !isPasswordValid) {
+      setError('Invalid username or password format.');
+      return;
+    }
+
+    // Handle login logic
+    try {
+      const response = await fetch('/api/passport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password, isSignUpMode }),
+      });
+
+      if (response.ok) {
+        console.log('Login successful!');
+        router.push('/try-interview');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message);
       }
-    
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setError('An unexpected error occurred.');
+    }
   };
 
   const toggleMode = () => {
@@ -55,7 +61,7 @@ const Login: React.FC = () => {
 
         <div className="mb-4">
           <input
-            className="w-full p-2 border rounded-md"
+            className={`w-full p-2 border rounded-md ${isUsernameValid}`}
             type="text"
             placeholder="Username"
             value={username}
@@ -65,7 +71,7 @@ const Login: React.FC = () => {
 
         <div className="mb-4">
           <input
-            className="w-full p-2 border rounded-md"
+            className={`w-full p-2 border rounded-md ${isPasswordValid}`}
             type="password"
             placeholder="Password"
             value={password}
