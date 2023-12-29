@@ -3,7 +3,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-console.log("login.ts");
+// console.log("login.ts");
 const LocalStrategy = passportLocal.Strategy;
 
 interface User {
@@ -27,8 +27,8 @@ export default async function handler(req: any, res: any) {
 }
 
 function handleLogin(req: Request, res: Response, users: User[]) {
-  console.log("request received", req.body);
-  console.log("users", users);
+  // console.log("request received", req.body);
+  // console.log("users", users);
   // const users = [{ id: 1, username: "testuser", password: "password" }];
   // Serialize and deserialize user
   passport.serializeUser((user: any, done) => {
@@ -46,21 +46,21 @@ function handleLogin(req: Request, res: Response, users: User[]) {
       async (username, password, done) => {
         try {
           // console.log("username", username);
-          users.forEach((element) => {
-            console.log("doc", element.username);
-          });
+          // users.forEach((element) => {
+          //   console.log("doc", element.username);
+          // });
           const user = users.find((u) => u.username == username);
-          console.log("user", user);
+          // console.log("user", user);
           if (!user) {
             return done(null, false, {
               message: `Username ${username} not found.`,
             });
           }
 
-          // const passwordMatch = await bcrypt.compare(password, user.password);
-          console.log(`password:${typeof password}`);
-          console.log(`userpassword:${typeof user.password}`);
-          const passwordMatch = password == user.password ? true : false;
+          const passwordMatch = await bcrypt.compare(password, user.password);
+          // console.log(`password:${typeof password}`);
+          // console.log(`userpassword:${typeof user.password}`);
+          // const passwordMatch = password == user.password ? true : false;
           if (!passwordMatch) {
             return done(null, false, {
               message: "Invalid username or password.",
@@ -80,17 +80,17 @@ function handleLogin(req: Request, res: Response, users: User[]) {
 }
 
 async function handleSignup(req: Request, res: Response) {
-  const users = [{ id: 1, username: "testuser", password: "password" }];
-
+  // const users = [{ id: 1, username: "testuser", password: "password" }];
+  const data = await readData();
+  const users: User[] = data.data;
+  const isSignUpMode = req.body.isSignUpMode;
   passport.use(
     "signup",
     new LocalStrategy(
       { usernameField: "username" },
       async (username, password, done) => {
         try {
-          const existingUser = users.find(
-            (u) => u.username === username.toLowerCase(),
-          );
+          const existingUser = users.find((u) => u.username == username);
 
           if (existingUser) {
             return done(null, false, {
@@ -99,15 +99,15 @@ async function handleSignup(req: Request, res: Response) {
           }
           const hashedPassword = await bcrypt.hash(password, 10);
           const newUser = {
-            id: users.length + 1,
             username,
             password: hashedPassword,
+            isSignUpMode,
           };
-          console.log("new user", newUser);
+          // console.log("new user", newUser);
           // For simplicity, storing password in plain text (You should use bcrypt to hash passwords in a real application)
           // const newUser = { id: users.length + 1, username, password };
-          users.push(newUser);
-
+          // users.push(newUser);
+          storeUser(newUser);
           return done(null, newUser);
         } catch (error) {
           return done(error);
@@ -118,7 +118,6 @@ async function handleSignup(req: Request, res: Response) {
 
   passport.authenticate("signup", (err: Error, userData: any, options: any) => {
     handleAuthenticationResult(err, userData, options, res);
-    storeUser(req);
   })(req, res);
 }
 
@@ -130,25 +129,26 @@ function handleAuthenticationResult(
 ) {
   let message;
   if (!userData) {
-    console.log("Authentication failed", options.message);
+    // console.log("Authentication failed", options.message);
     message = options.message;
     res.status(401).json({ message });
   } else {
-    console.log("Authentication success");
+    // console.log("Authentication success");
     message = "Success";
     res.status(200).json({ userData });
   }
+  res.status(500);
 }
 
-async function storeUser(req: any) {
-  const userData = req.body;
-  console.log("userdata", userData);
+async function storeUser(newUser: any) {
+  const userData = newUser;
+  // console.log("userdata", userData);
   var dbApiBody = JSON.stringify({
     collection: "Candidates",
     data: userData,
   });
 
-  console.log("userdata", dbApiBody);
+  // console.log("userdata", dbApiBody);
 
   const options = {
     method: "POST",
@@ -158,13 +158,10 @@ async function storeUser(req: any) {
     },
     body: dbApiBody,
   };
-  console.log("between request and data", userData);
-  const Response = await fetch(
-    "https://api.worqhat.com/api/collections/data/add",
-    options,
-  );
-  const respdata = await Response.json();
-  console.log("after request and data", respdata);
+  // console.log("between request and data", userData);
+  await fetch("https://api.worqhat.com/api/collections/data/add", options);
+  // const respdata = await Response.json();
+  // console.log("after request and data", respdata);
 }
 async function readData() {
   var dbApiBody = JSON.stringify({
