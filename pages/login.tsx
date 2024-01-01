@@ -57,7 +57,7 @@ const Login: React.FC = () => {
           !isLengthValid ||
           !isConfirmPasswordValid))
     ) {
-      setError("Invalid username or password format.");
+      setError("Invalid Email or Password format.");
       return;
     }
 
