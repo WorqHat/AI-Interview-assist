@@ -1,28 +1,44 @@
-// Login.tsx
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [isSignUpMode, setIsSignUpMode] = useState(false); 
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
   const formData = new FormData();
   formData.append("username", username);
   formData.append("password", password);
+
   const router = useRouter();
 
   const isUsernameValid = /^[a-zA-Z0-9_-]{3,16}$/.test(username);
-  const isPasswordValid = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/.test(password);
+  const isPasswordStrongEnough =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/.test(
+      password,
+    );
+
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const confirmPasswordValue = e.target.value;
+    setConfirmPassword(confirmPasswordValue);
+    setIsConfirmPasswordValid(confirmPasswordValue === password);
+  };
 
   const handleAction = async () => {
-    if (!isUsernameValid || !isPasswordValid) {
+    if (
+      !isUsernameValid ||
+      !isPasswordStrongEnough ||
+      !isConfirmPasswordValid
+    ) {
       setError("Invalid username or password format.");
       return;
     }
 
-    // Handle login logic
     try {
       const response = await fetch("/api/passport", {
         method: "POST",
@@ -47,7 +63,7 @@ const Login: React.FC = () => {
 
   const toggleMode = () => {
     setIsSignUpMode((prevMode) => !prevMode);
-    setError(null); // Reset error when toggling modes
+    setError(null); 
   };
 
   return (
@@ -68,7 +84,9 @@ const Login: React.FC = () => {
 
         <div className="mb-4">
           <input
-            className={`w-full p-2 border rounded-md ${isUsernameValid}`}
+            className={`w-full p-2 border rounded-md ${
+              isUsernameValid ? "border-green-500" : "border-red-500"
+            }`}
             type="text"
             placeholder="Username"
             value={username}
@@ -78,12 +96,34 @@ const Login: React.FC = () => {
 
         <div className="mb-4">
           <input
-            className={`w-full p-2 border rounded-md ${isPasswordValid}`}
+            className={`w-full p-2 border rounded-md ${
+              isPasswordStrongEnough ? "border-green-500" : "border-red-500"
+            }`}
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {!isPasswordStrongEnough && (
+            <p className="text-red-500 mt-2">
+              Password must contain at least one capital letter, one numeric
+              digit, one special character, and have a minimum length of 8
+              characters.
+            </p>
+          )}
+
+          <input
+            className={`w-full p-2 border rounded-md ${
+              isConfirmPasswordValid ? "border-green-500" : "border-red-500"
+            }`}
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+          {!isConfirmPasswordValid && confirmPassword && (
+            <p className="text-red-500 mt-2">Passwords do not match.</p>
+          )}
         </div>
 
         <button
@@ -95,7 +135,7 @@ const Login: React.FC = () => {
 
         {isSignUpMode ? (
           <p className="mt-4">
-            Already have an account ? {" "}
+            Already have an account ?{" "}
             <button className="text-blue-500" onClick={toggleMode}>
               Login
             </button>
@@ -112,7 +152,5 @@ const Login: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default Login;
