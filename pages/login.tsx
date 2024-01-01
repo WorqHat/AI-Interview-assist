@@ -1,4 +1,3 @@
-// Import React, useState, and other necessary modules
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -10,6 +9,12 @@ const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isConfirmPasswordValid, setIsConfirmPasswordValid] = useState(false);
+  const [isCapitalLetter, setIsCapitalLetter] = useState(false);
+  const [isNumericDigit, setIsNumericDigit] = useState(false);
+  const [isSpecialCharacter, setIsSpecialCharacter] = useState(false);
+  const [isLengthValid, setIsLengthValid] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(false); 
+
   const formData = new FormData();
   formData.append("username", username);
   formData.append("password", password);
@@ -17,10 +22,21 @@ const Login: React.FC = () => {
   const router = useRouter();
 
   const isUsernameValid = /^[a-zA-Z0-9_-]{3,16}$/.test(username);
-  const isPasswordStrongEnough =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/.test(
-      password,
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    // Password validation criteria
+    setIsCapitalLetter(/[A-Z]/.test(newPassword));
+    setIsNumericDigit(/\d/.test(newPassword));
+    setIsSpecialCharacter(/[!@#$%^&*()_+]/.test(newPassword));
+    setIsLengthValid(newPassword.length >= 8);
+
+    setIsPasswordValid(
+      isCapitalLetter && isNumericDigit && isSpecialCharacter && isLengthValid,
     );
+  };
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -28,20 +44,23 @@ const Login: React.FC = () => {
     const confirmPasswordValue = e.target.value;
     setConfirmPassword(confirmPasswordValue);
 
-    // Check if the confirm password matches the password
     setIsConfirmPasswordValid(confirmPasswordValue === password);
   };
 
   const handleAction = async () => {
     if (
       !isUsernameValid ||
-      (isSignUpMode && (!isPasswordStrongEnough || !isConfirmPasswordValid))
+      (isSignUpMode &&
+        (!isCapitalLetter ||
+          !isNumericDigit ||
+          !isSpecialCharacter ||
+          !isLengthValid ||
+          !isConfirmPasswordValid))
     ) {
       setError("Invalid username or password format.");
       return;
     }
 
-    // Handle login logic
     try {
       const response = await fetch("/api/passport", {
         method: "POST",
@@ -66,7 +85,7 @@ const Login: React.FC = () => {
 
   const toggleMode = () => {
     setIsSignUpMode((prevMode) => !prevMode);
-    setError(null); // Reset error when toggling modes
+    setError(null); 
   };
 
   return (
@@ -88,7 +107,7 @@ const Login: React.FC = () => {
         <div className="mb-4">
           <input
             className={`w-full p-2 border rounded-md ${
-              isUsernameValid ? "border-green-500" : "border-red-500"
+              isUsernameValid ? "border-black" : "border-black"
             }`}
             type="text"
             placeholder="Username"
@@ -100,19 +119,48 @@ const Login: React.FC = () => {
         <div className="mb-4">
           <input
             className={`w-full p-2 border rounded-md ${
-              isPasswordStrongEnough ? "border-green-500" : "border-red-500"
+              isSignUpMode
+                ? isPasswordValid
+                  ? "border-green-500"
+                  : "border-black"
+                : "border-black"
             }`}
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handlePasswordChange}
           />
-          {isSignUpMode && !isPasswordStrongEnough && (
-            <p className="text-red-500 mt-2">
-              Password must contain at least one capital letter, one numeric
-              digit, one special character, and have a minimum length of 8
-              characters.
-            </p>
+          {isSignUpMode && (
+            <div>
+              <p
+                className={`mt-2 ${
+                  isCapitalLetter ? "text-green-500" : "text-black"
+                }`}
+              >
+                At least one capital letter
+              </p>
+              <p
+                className={`mt-2 ${
+                  isNumericDigit ? "text-green-500" : "text-black"
+                }`}
+              >
+                At least one numeric digit
+              </p>
+              <p
+                className={`mt-2 ${
+                  isSpecialCharacter ? "text-green-500" : "text-black"
+                }`}
+              >
+                At least one special character
+              </p>
+              <p
+                className={`mt-2 ${
+                  isLengthValid ? "text-green-500" : "text-black"
+                }`}
+              >
+                Minimum length of 8 characters
+              </p>
+            </div>
           )}
         </div>
 
@@ -120,7 +168,7 @@ const Login: React.FC = () => {
           <div className="mb-4">
             <input
               className={`w-full p-2 border rounded-md ${
-                isConfirmPasswordValid ? "border-green-500" : "border-red-500"
+                isConfirmPasswordValid ? "border-green-500" : "border-black"
               }`}
               type="password"
               placeholder="Confirm Password"
