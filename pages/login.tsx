@@ -21,7 +21,7 @@ const Login: React.FC = () => {
 
   const router = useRouter();
 
-  const isUsernameValid = /^[a-zA-Z0-9_-]{3,16}$/.test(username);
+  const isUsernameValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
