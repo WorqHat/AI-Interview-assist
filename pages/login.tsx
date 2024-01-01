@@ -1,3 +1,4 @@
+// Import React, useState, and other necessary modules
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -26,19 +27,21 @@ const Login: React.FC = () => {
   ) => {
     const confirmPasswordValue = e.target.value;
     setConfirmPassword(confirmPasswordValue);
+
+    // Check if the confirm password matches the password
     setIsConfirmPasswordValid(confirmPasswordValue === password);
   };
 
   const handleAction = async () => {
     if (
       !isUsernameValid ||
-      !isPasswordStrongEnough ||
-      !isConfirmPasswordValid
+      (isSignUpMode && (!isPasswordStrongEnough || !isConfirmPasswordValid))
     ) {
       setError("Invalid username or password format.");
       return;
     }
 
+    // Handle login logic
     try {
       const response = await fetch("/api/passport", {
         method: "POST",
@@ -63,7 +66,7 @@ const Login: React.FC = () => {
 
   const toggleMode = () => {
     setIsSignUpMode((prevMode) => !prevMode);
-    setError(null); 
+    setError(null); // Reset error when toggling modes
   };
 
   return (
@@ -104,27 +107,31 @@ const Login: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {!isPasswordStrongEnough && (
+          {isSignUpMode && !isPasswordStrongEnough && (
             <p className="text-red-500 mt-2">
               Password must contain at least one capital letter, one numeric
               digit, one special character, and have a minimum length of 8
               characters.
             </p>
           )}
-
-          <input
-            className={`w-full p-2 border rounded-md ${
-              isConfirmPasswordValid ? "border-green-500" : "border-red-500"
-            }`}
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-          />
-          {!isConfirmPasswordValid && confirmPassword && (
-            <p className="text-red-500 mt-2">Passwords do not match.</p>
-          )}
         </div>
+
+        {isSignUpMode && (
+          <div className="mb-4">
+            <input
+              className={`w-full p-2 border rounded-md ${
+                isConfirmPasswordValid ? "border-green-500" : "border-red-500"
+              }`}
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+            />
+            {!isConfirmPasswordValid && confirmPassword && (
+              <p className="text-red-500 mt-2">Passwords do not match.</p>
+            )}
+          </div>
+        )}
 
         <button
           className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
