@@ -110,7 +110,7 @@ const Login: React.FC = () => {
               isUsernameValid ? "border-black" : "border-black"
             }`}
             type="text"
-            placeholder="Username"
+            placeholder="Email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />

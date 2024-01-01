@@ -53,7 +53,7 @@ function handleLogin(req: Request, res: Response, users: User[]) {
           // console.log("user", user);
           if (!user) {
             return done(null, false, {
-              message: `Username ${username} not found.`,
+              message: `Email ${username} not found.`,
             });
           }
 
@@ -94,7 +94,7 @@ async function handleSignup(req: Request, res: Response) {
 
           if (existingUser) {
             return done(null, false, {
-              message: `Username ${username} is already taken.`,
+              message: `Email ${username} is already taken.`,
             });
           }
           const hashedPassword = await bcrypt.hash(password, 10);
