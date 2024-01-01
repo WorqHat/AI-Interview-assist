@@ -74,9 +74,13 @@ function handleLogin(req: Request, res: Response, users: User[]) {
       },
     ),
   );
-  passport.authenticate("local", (err: Error, userData: any, options: any) => {
+  passport.authenticate(
+  "local",
+  { failureRedirect: "/login" }, // Redirect to login if authentication fails
+  (err, userData, options) => {
     handleAuthenticationResult(err, userData, options, res);
-  })(req, res);
+  }
+)(req, res);
 }
 
 async function handleSignup(req: Request, res: Response) {

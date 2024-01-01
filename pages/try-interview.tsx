@@ -16,6 +16,7 @@ webcam component and a video processing library called FFmpeg. */
 import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
+import { ensureAuthenticated } from "../utils/authMiddleware";
 dotenv.config();
 
 /* The above code is defining an array of objects called "questions". Each object represents a question
@@ -2073,3 +2074,4 @@ a width of 480, height of 640, and facing mode set to "user". */
 }
 
 export default Interview;
+export const getServerSideProps = ensureAuthenticated;
