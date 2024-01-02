@@ -1,38 +1,33 @@
-// utils/authMiddleware.ts
 import { NextApiRequest, NextApiResponse } from "next";
-import passport from "passport";
-
-export const authenticate = (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  next: any
-) => {
-  passport.authenticate(
-    "local",
-    (err: Error, user: any, info: any) => {
-      if (err || !user) {
-        return res.redirect("/login");
-      }
-
-      req.logIn(user, (loginErr) => {
-        if (loginErr) {
-          return res.redirect("/login");
-        }
-
-        return next();
-      });
-    }
-  )(req, res, next);
-};
+// import cookie from "cookie";
 
 export const ensureAuthenticated = (
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse | undefined,
   next: any
 ) => {
-  if (req.isAuthenticated()) {
-    return next();
-  } else {
-    return res.redirect("/login");
+  try {
+    const userCookie = req.cookies.user;
+    const user = userCookie ? JSON.parse(userCookie) : null;
+
+    if (user) {
+      return next();
+    } else {
+      if (res) {
+        res.setHeader("Location", "/login");
+        res.statusCode = 302; 
+        res.end();
+      } else {
+        throw new Error("Response object is not defined");
+      }
+    }
+  } catch (parseErr) {
+    if (res) {
+      res.setHeader("Location", "/login");
+      res.statusCode = 302; 
+      res.end();
+    } else {
+      throw new Error("Response object is not defined");
+    }
   }
 };

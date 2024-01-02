@@ -2074,4 +2074,9 @@ a width of 480, height of 640, and facing mode set to "user". */
 }
 
 export default Interview;
-export const getServerSideProps = ensureAuthenticated;
+export const getServerSideProps = async (context: any) => {
+  ensureAuthenticated(context.req, context.res, () => {});
+  return {
+    props: {},
+  };
+};
