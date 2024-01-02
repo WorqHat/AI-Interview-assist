@@ -11,6 +11,7 @@ import type { AppProps } from "next/app";
  * of the application. It can be any React component.
  * @returns a JSX element.
  */
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className="scroll-smooth antialiased [font-feature-settings:'ss01']">

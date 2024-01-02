@@ -9,7 +9,7 @@ export const ensureAuthenticated = (
   try {
     const userCookie = req.cookies.user;
     const user = userCookie ? JSON.parse(userCookie) : null;
-
+//Auth from user
     if (user) {
       return next();
     } else {
