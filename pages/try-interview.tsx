@@ -300,29 +300,22 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
 
           setGeneratedFeedback("");
 
-          /* The above code is making a POST request to the Worqhat API endpoint at
-"https://api.worqhat.com/api/ai/content/v2". It is sending a JSON payload in the request body, which
-includes the training data, a question, randomness value, and content size. The request also
-includes headers with the authorization values, which are retrieved from environment
-variables. */
-
-          /* The above code is making an asynchronous request to a specified URL using the fetch function. It
-then waits for the response to be received and converts it to JSON format using the response.json()
-method. */
-          const response = await fetch("https://api.worqhat.com/api/ai/content/v2", {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-              "Content-Type": "application/json",
+          const response = await fetch(
+            "https://api.worqhat.com/api/ai/content/v2",
+            {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                training_data:
+                  "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
+                question: prompt,
+                randomness: 0.2,
+              }),
             },
-            body: JSON.stringify({
-              training_data:
-                "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
-              question: prompt,
-              randomness: 0.2,
-
-            }),
-          });
+          );
           const data = await response.json();
 
           if (data.error) {
@@ -331,7 +324,30 @@ method. */
 
           setIsLoading(false);
           setGeneratedFeedback(data.content);
+
+          // Store question, prompt, and feedback in the specified format
+          const options = {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              collection: "sanket",
+              data: {
+                interviewquestion: question,
+                userresponse: prompt,
+                feedback: data.content,
+              },
+            }),
+          };
+
+          fetch("https://api.worqhat.com/api/collections/data/add", options)
+            .then((response) => response.json())
+            .then((response) => console.log(response))
+            .catch((err) => console.error(err));
         }
+
       } else {
         console.error("Upload failed.");
       }
