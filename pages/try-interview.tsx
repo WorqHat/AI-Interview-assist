@@ -333,7 +333,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                collection: "sanket",
+                collection: "interview",
                 data: {
                   interviewquestion: question,
                   userresponse: results.transcript,
