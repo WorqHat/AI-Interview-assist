@@ -268,89 +268,89 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
         method: "POST",
         body: formData,
       });
-      const results = await upload.json();
+        const results = await upload.json();
 
-      if (upload.ok) {
-        setIsSuccess(true);
-        setSubmitting(false);
+        if (upload.ok) {
+          setIsSuccess(true);
+          setSubmitting(false);
 
-        if (results.error) {
-          setTranscript(results.error);
-        } else {
-          setTranscript(results.transcript);
-        }
+          if (results.error) {
+            setTranscript(results.error);
+          } else {
+            setTranscript(results.transcript);
+          }
 
-        console.log("Uploaded successfully!");
+          console.log("Uploaded successfully!");
 
-        await Promise.allSettled([
-          new Promise((resolve) => setTimeout(resolve, 800)),
-        ]).then(() => {
-          setCompleted(true);
-          console.log("Success!");
-        });
+          await Promise.allSettled([
+            new Promise((resolve) => setTimeout(resolve, 800)),
+          ]).then(() => {
+            setCompleted(true);
+            console.log("Success!");
+          });
 
-        if (results.transcript.length > 0) {
-          const prompt = `Please give feedback on the following interview question: ${question} given the following transcript: ${
-            results.transcript
-          }. ${
-            selected.name === "Behavioral"
-              ? "Please also give feedback on the candidate's communication skills. Make sure their response is structured (perhaps using the STAR or PAR frameworks)."
-              : "Please also give feedback on the candidate's communication skills. Make sure they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question."
-          } \n\n\ Feedback on the candidate's response:`;
+          if (results.transcript.length > 0) {
+            const prompt = `Please give feedback on the following interview question: ${question} given the following transcript: ${
+              results.transcript
+            }. ${
+              selected.name === "Behavioral"
+                ? "Please also give feedback on the candidate's communication skills. Make sure their response is structured (perhaps using the STAR or PAR frameworks)."
+                : "Please also give feedback on the candidate's communication skills. Make sure they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question."
+            } \n\n\ Feedback on the candidate's response:`;
 
-          setGeneratedFeedback("");
+            setGeneratedFeedback("");
 
-          const response = await fetch(
-            "https://api.worqhat.com/api/ai/content/v2",
-            {
+            const response = await fetch(
+              "https://api.worqhat.com/api/ai/content/v2",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  training_data:
+                    "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
+                  question: prompt,
+                  randomness: 0.2,
+                }),
+              },
+            );
+            const data = await response.json();
+
+            if (data.error) {
+              console.log(data.error);
+            }
+
+            setIsLoading(false);
+            setGeneratedFeedback(data.content);
+
+            // Store question, prompt, and feedback in the specified format
+            const options = {
               method: "POST",
               headers: {
                 Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                training_data:
-                  "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
-                question: prompt,
-                randomness: 0.2,
+                collection: "sanket",
+                data: {
+                  interviewquestion: question,
+                  userresponse: results.transcript,
+                  feedback: data.content,
+                },
               }),
-            },
-          );
-          const data = await response.json();
+            };
 
-          if (data.error) {
-            console.log(data.error);
+            fetch("https://api.worqhat.com/api/collections/data/add", options)
+              .then((response) => response.json())
+              .then((response) => console.log(response))
+              .catch((err) => console.error(err));
           }
 
-          setIsLoading(false);
-          setGeneratedFeedback(data.content);
-
-          // Store question, prompt, and feedback in the specified format
-          const options = {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              collection: "sanket",
-              data: {
-                interviewquestion: question,
-                userresponse: prompt,
-                feedback: data.content,
-              },
-            }),
-          };
-
-          fetch("https://api.worqhat.com/api/collections/data/add", options)
-            .then((response) => response.json())
-            .then((response) => console.log(response))
-            .catch((err) => console.error(err));
+        } else {
+          console.error("Upload failed.");
         }
-
-      } else {
-        console.error("Upload failed.");
-      }
 
       /* The above code is using the `setTimeout` function to delay the execution of a callback function. The
 callback function is clearing an array called `recordedChunks` by setting it to an empty array. The
