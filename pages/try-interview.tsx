@@ -89,9 +89,9 @@ function classNames(...classes: string[]) {
 
 const Interview: React.FC = () => {
   const [selected, setSelected] = useState(questions[0]);
-  const [selectedInterviewer, setSelectedInterviewer] = useState(
-    interviewers[0],
-  );
+  // const [selectedInterviewer, setSelectedInterviewer] = useState(
+  //   interviewers[0],
+  // );
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(true);
   const webcamRef = useRef<Webcam | null>(null);
@@ -256,9 +256,9 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
       const question =
         selected.name === "Behavioral"
           ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
-          : selectedInterviewer.name === "Ravi"
+          : `Tell me about yourself. Why don${`’`}t you walk me through your resumee?`
           ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-          : selectedInterviewer.name === "Sunita"
+          : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
           ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
           : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?";
 
@@ -528,9 +528,9 @@ a width of 480, height of 640, and facing mode set to "user". */
                   <h2 className="text-2xl font-semibold text-left text-[#1D2B3A] mb-2">
                     {selected.name === "Behavioral"
                       ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
-                      : selectedInterviewer.name === "Ravi"
+                      : `Tell me about yourself. Why don${`’`}t you walk me through your resumees?`
                       ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-                      : selectedInterviewer.name === "Sunita"
+                      : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
                       ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
                       : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
                   </h2>
@@ -590,20 +590,8 @@ a width of 480, height of 640, and facing mode set to "user". */
                             >
                               <source
                                 src={
-                                  selectedInterviewer.name === "Ravi"
-                                    ? selected.name === "Behavioral"
-                                      ? "/interviewers/DemoInterviewMale.mp4"
-                                      : "/interviewers/RaviTechnical.mp4"
-                                    : selectedInterviewer.name === "Amit"
-                                    ? selected.name === "Behavioral"
-                                      ? "/interviewers/AmitBehavioral.mp4"
-                                      : "/interviewers/AmitTechnical.mp4"
-                                    : selectedInterviewer.name === "Sunita"
-                                    ? selected.name === "Behavioral"
-                                      ? "/interviewers/BehavioralSunita.mp4"
-                                      : "/interviewers/SunitaTechnical.mp4"
-                                    : selected.name === "Behavioral"
-                                    ? "/interviewers/DemoInterviewMale.mp4"
+                                  selected.name === "Behavioral"
+                                    ? "/techinterview/b1.mp3"
                                     : "/interviewers/RaviTechnical.mp4"
                                 }
                                 type="video/mp4"
@@ -1365,9 +1353,9 @@ a width of 480, height of 640, and facing mode set to "user". */
                     >
                       {selected.name === "Behavioral"
                         ? "Tell me about yourself"
-                        : selectedInterviewer.name === "Ravi"
+                        : `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
                         ? "What is a Hash Table, and what is the average case for each of its operations?"
-                        : selectedInterviewer.name === "Sunita"
+                        : "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
                         ? "Uber is looking to expand its product line. How would you go about doing this?"
                         : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
                     </motion.span>
@@ -1389,62 +1377,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                     </ul>
                   </div>
                 )}
-                {step === 2 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                    className="mt-[12px] flex bg-gray-100 h-[80%] rounded-lg relative ring-1 ring-gray-900/5 shadow-md"
-                  >
-                    {selectedInterviewer.name === "Ravi" ? (
-                      <motion.img
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{
-                          duration: 0.5,
-                          ease: [0.23, 1, 0.32, 1],
-                        }}
-                        key="Ravi"
-                        src="/placeholders/Ravi.webp"
-                        alt="Ravi's Interviewer Profile"
-                        className="absolute top-6 left-6 w-[30%] aspect-video bg-gray-700 rounded ring-1 ring-gray-900/5 shadow-md object-cover"
-                      />
-                    ) : selectedInterviewer.name === "Amit" ? (
-                      <motion.img
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{
-                          duration: 0.5,
-                          ease: [0.23, 1, 0.32, 1],
-                        }}
-                        key="Amit"
-                        src="/placeholders/Amit.webp"
-                        alt="Amit's Interviewer Profile"
-                        className="absolute top-6 left-6 w-[30%] aspect-video bg-gray-700 rounded ring-1 ring-gray-900/5 shadow-md object-cover"
-                      />
-                    ) : selectedInterviewer.name === "Sunita" ? (
-                      <motion.img
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{
-                          duration: 0.5,
-                          ease: [0.23, 1, 0.32, 1],
-                        }}
-                        key="Sunita"
-                        src="/placeholders/Sunita.webp"
-                        alt="Sunita's Interviewer Profile"
-                        className="absolute top-6 left-6 w-[30%] aspect-video bg-gray-700 rounded ring-1 ring-gray-900/5 shadow-md object-cover"
-                      />
-                    ) : (
-                      <div className="absolute top-6 left-6 w-[30%] aspect-video bg-gray-700 rounded"></div>
-                    )}
-                    <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-red-400 ring-4 ring-white rounded-full"></div>
-                  </motion.div>
-                )}
+
                 {step === 1 && (
                   <ul className="mt-[12px] flex items-center space-x-[2px]">
                     <svg
