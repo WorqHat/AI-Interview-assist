@@ -255,7 +255,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
 
       const question =
         selected.name === "Behavioral"
-          ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
+          ? `Tell me about yourself. Why don${`’`}t you walk me through your resume...............?`
           : `Tell me about yourself. Why don${`’`}t you walk me through your resumee?`
           ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
           : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
