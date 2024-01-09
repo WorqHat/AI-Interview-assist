@@ -98,7 +98,7 @@ const Interview: React.FC = () => {
   if(typeof receivedData === 'string'){
   var username : string =receivedData;
   userid = username;
-  console.log("receivedData",userid);
+  // console.log("receivedData",userid);
   }
 
   const [selected, setSelected] = useState(questions[0]);
@@ -235,7 +235,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
         // console.log("questionset",randomKey, randomValue);
         randomQuestion.file = "/techinterview/"+randomKey+".mp3";
         randomQuestion.Content = randomValue;
-        console.log("questionset",randomQuestion);
+        // console.log("questionset",randomQuestion);
     }else{
         const techquestions = questionsSet.technicalQuestions;
         // console.log("questions",techquestions);
@@ -244,7 +244,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
         const randomValue = techquestions[randomKey as keyof typeof techquestions];
         randomQuestion.file = "/techinterview/"+randomKey+".mp3";
         randomQuestion.Content = randomValue;
-        console.log("questionset",randomQuestion);
+        // console.log("questionset",randomQuestion);
     }
   }
 

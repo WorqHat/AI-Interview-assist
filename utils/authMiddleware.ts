@@ -26,7 +26,7 @@ export const ensureAuthenticated = (
       }
     }
   } catch (verifyErr) {
-    console.log("Failed to verify token", verifyErr);
+    // console.log("Failed to verify token", verifyErr);
     if (res) {
       res.setHeader("Location", "/login");
       res.statusCode = 302;
