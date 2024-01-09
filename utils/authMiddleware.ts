@@ -8,13 +8,13 @@ export const ensureAuthenticated = (
 ) => {
   try {
     const token = req.cookies.token;
-
+    // console.log("token", token);
     if (token) {
       const decodedToken = jwt.verify(
         token,
         "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
       );
-      console.log("Authenticated User", decodedToken);
+      // console.log("Authenticated User", decodedToken);
       return next();
     } else {
       if (res) {
