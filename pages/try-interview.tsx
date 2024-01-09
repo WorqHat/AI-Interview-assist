@@ -16,6 +16,7 @@ webcam component and a video processing library called FFmpeg. */
 import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
+import questionsSet from './api/interview.json'
 dotenv.config();
 
 /* The above code is defining an array of objects called "questions". Each object represents a question
@@ -112,6 +113,7 @@ const Interview: React.FC = () => {
   const [transcript, setTranscript] = useState("");
   const [generatedFeedback, setGeneratedFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [randomQuestion, selectRandomQuestion] = useState({file:"", Content:""});
 
   /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
 This function takes in a `BlobEvent` object as a parameter. */
@@ -210,6 +212,30 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
     };
   }, [capturing, seconds, handleStopCaptureClick]);
 
+
+  const handleRandomQuestion  = async () => {
+    if( selected.name === "Behavioral"){
+        const bhQuestions = questionsSet.behaviouralQuestion;
+        // console.log("questions",bhQuestions);
+        const keys = Object.keys(bhQuestions);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const randomValue = bhQuestions[randomKey as keyof typeof bhQuestions];
+        // console.log("questionset",randomKey, randomValue);
+        randomQuestion.file = "/techinterview/"+randomKey+".mp3";
+        randomQuestion.Content = randomValue;
+        console.log("questionset",randomQuestion);
+    }else{
+        const techquestions = questionsSet.technicalQuestions;
+        // console.log("questions",techquestions);
+        const keys = Object.keys(techquestions);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const randomValue = techquestions[randomKey as keyof typeof techquestions];
+        randomQuestion.file = "/techinterview/"+randomKey+".mp3";
+        randomQuestion.Content = randomValue;
+        console.log("questionset",randomQuestion);
+    }
+  }
+
   const handleDownload = async () => {
     if (recordedChunks.length) {
       setSubmitting(true);
@@ -253,14 +279,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
       const formData = new FormData();
       formData.append("file", output, `${unique_id}.mp3`);
 
-      const question =
-        selected.name === "Behavioral"
-          ? `Tell me about yourself. Why don${`’`}t you walk me through your resume...............?`
-          : `Tell me about yourself. Why don${`’`}t you walk me through your resumee?`
-          ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-          : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
-          ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
-          : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?";
+      const question = randomQuestion.Content;
 
       setStatus("Transcribing");
 
@@ -526,13 +545,7 @@ a width of 480, height of 640, and facing mode set to "user". */
               {recordingPermission ? (
                 <div className="w-full flex flex-col max-w-[1080px] mx-auto justify-center">
                   <h2 className="text-2xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    {selected.name === "Behavioral"
-                      ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
-                      : `Tell me about yourself. Why don${`’`}t you walk me through your resumees?`
-                      ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
-                      : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
-                      ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
-                      : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
+                    {randomQuestion.Content}
                   </h2>
                   <span className="text-[14px] leading-[20px] text-[#1a2b3b] font-normal mb-4">
                     Asked by top companies like Google, Facebook and more
@@ -590,11 +603,9 @@ a width of 480, height of 640, and facing mode set to "user". */
                             >
                               <source
                                 src={
-                                  selected.name === "Behavioral"
-                                    ? "/techinterview/b1.mp3"
-                                    : "/interviewers/RaviTechnical.mp4"
+                                  randomQuestion.file
                                 }
-                                type="video/mp4"
+                                type="audio/mp3"
                               />
                             </video>
                           </div>
@@ -1028,6 +1039,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                       <button
                         onClick={() => {
                           setStep(3);
+                          handleRandomQuestion();
                         }}
                         className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#1E2B3A] text-white hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] no-underline flex gap-x-2  active:scale-95 scale-100 duration-75"
                         style={{
