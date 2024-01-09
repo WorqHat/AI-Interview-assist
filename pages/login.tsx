@@ -20,14 +20,10 @@ const Login: React.FC = () => {
   formData.append("password", password);
 
   const router = useRouter();
-
   const isUsernameValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
-
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
-
-    // Password validation criteria
     setIsCapitalLetter(/[A-Z]/.test(newPassword));
     setIsNumericDigit(/\d/.test(newPassword));
     setIsSpecialCharacter(/[!@#$%^&*()_+]/.test(newPassword));

@@ -3,6 +3,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 // console.log("login.ts");
 const LocalStrategy = passportLocal.Strategy;
 
@@ -14,10 +15,12 @@ interface User {
 
 export default async function handler(req: any, res: any) {
   const action = req.body.isSignUpMode;
+
   // console.log("loginStatus", action);
   if (action === false) {
     const data = await readData();
     const userData: User[] = data.data;
+    // console.log("test", userData);
     handleLogin(req, res, userData);
   } else if (action === true) {
     handleSignup(req, res);
@@ -135,6 +138,14 @@ function handleAuthenticationResult(
   } else {
     // console.log("Authentication success");
     message = "Success";
+    const token = jwt.sign(
+      userData,
+      "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
+      { expiresIn: "1h" },
+    );
+
+    // Set the token as a cookie
+    res.setHeader("Set-Cookie", `token=${token}; Path=/; HttpOnly`);
     res.status(200).json({ userData });
   }
   res.status(500);
