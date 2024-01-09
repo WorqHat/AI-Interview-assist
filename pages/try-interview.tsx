@@ -18,8 +18,9 @@ import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
 import { ensureAuthenticated } from "../utils/authMiddleware";
 import questionsSet from './api/interview.json'
+import { useRouter } from "next/router";
 dotenv.config();
-
+let userid:string;
 /* The above code is defining an array of objects called "questions". Each object represents a question
 and contains properties such as id, name, description, and difficulty. The questions array is
 populated with two question objects. */
@@ -90,6 +91,16 @@ function classNames(...classes: string[]) {
 }
 
 const Interview: React.FC = () => {
+
+  const router = useRouter();
+  const receivedData = router.query.user;
+  
+  if(typeof receivedData === 'string'){
+  var username : string =receivedData;
+  userid = username;
+  console.log("receivedData",userid);
+  }
+
   const [selected, setSelected] = useState(questions[0]);
   // const [selectedInterviewer, setSelectedInterviewer] = useState(
   //   interviewers[0],
@@ -115,7 +126,7 @@ const Interview: React.FC = () => {
   const [generatedFeedback, setGeneratedFeedback] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [randomQuestion, selectRandomQuestion] = useState({file:"", Content:""});
-
+  // console.log("initialId",userid);
   /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
 This function takes in a `BlobEvent` object as a parameter. */
   const handleDataAvailable = useCallback(
@@ -345,6 +356,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
             setIsLoading(false);
             setGeneratedFeedback(data.content);
 
+
             // Store question, prompt, and feedback in the specified format
             const options = {
               method: "POST",
@@ -355,6 +367,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               body: JSON.stringify({
                 collection: "interview",
                 data: {
+                  user: userid,
                   interviewquestion: question,
                   userresponse: results.transcript,
                   feedback: data.content,
@@ -1897,6 +1910,7 @@ a width of 480, height of 640, and facing mode set to "user". */
 
 export default Interview;
 export const getServerSideProps = async (context: any) => {
+  
   ensureAuthenticated(context.req, context.res, () => {});
   return {
     props: {},

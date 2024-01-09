@@ -143,9 +143,13 @@ function handleAuthenticationResult(
       "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
       { expiresIn: "1h" },
     );
-
+    console.log("userdata", userData.username);
     // Set the token as a cookie
-    res.setHeader("Set-Cookie", `token=${token}; Path=/; HttpOnly`);
+    res.setHeader(
+      "Set-Cookie",
+      `user=${userData.username}; token=${token}; Path=/; HttpOnly`,
+    );
+
     res.status(200).json({ userData });
   }
   res.status(500);

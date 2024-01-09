@@ -67,8 +67,11 @@ const Login: React.FC = () => {
       });
 
       if (response.ok) {
-        console.log("Login successful!");
-        router.push("/try-interview");
+        const user =await response.json()
+        console.log("Login successful!",user.userData.username);
+
+        router.push(`/try-interview?user=${user.userData.username}`);
+        // router.push(`/try-interview`);
       } else {
         const errorData = await response.json();
         setError(errorData.message);
