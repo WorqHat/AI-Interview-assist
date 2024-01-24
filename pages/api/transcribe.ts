@@ -71,7 +71,7 @@ during the execution of the code. */
   try {
     const response = await fetch(url, options);
     const data = (await response.json()) as { data: { text: string } };
-
+    console.log("data", data);
     const transcript = data.data.text;
 
     console.log(transcript);

@@ -21,6 +21,8 @@ import questionsSet from './api/interview.json'
 import { useRouter } from "next/router";
 dotenv.config();
 let userid:string;
+import fs from "fs";
+import path from "path";
 /* The above code is defining an array of objects called "questions". Each object represents a question
 and contains properties such as id, name, description, and difficulty. The questions array is
 populated with two question objects. */
@@ -90,6 +92,9 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+
+
+
 const Interview: React.FC = () => {
 
   const router = useRouter();
@@ -124,9 +129,12 @@ const Interview: React.FC = () => {
   const [completed, setCompleted] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [generatedFeedback, setGeneratedFeedback] = useState("");
+  const [generatedAnalysis, setGeneratedAnalysis] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [randomQuestion, selectRandomQuestion] = useState({file:"", Content:""});
   // console.log("initialId",userid);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
 This function takes in a `BlobEvent` object as a parameter. */
   const handleDataAvailable = useCallback(
@@ -147,27 +155,69 @@ empty dependency array `[]`. */
     setIsDesktop(window.innerWidth >= 768);
   }, []);
 
+  const handleCaptureFromCamera = async () => {
+    try {
+      const constraints = { video: true };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new (window as any).ImageCapture(track);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      const photoBlob = await imageCapture.takePhoto();
+
+      // console.log(photoBlob);
+
+      const formData = new FormData();
+      formData.append("image", photoBlob);
+      formData.append("question", "tell me about general interview setup from the image");
+      formData.append("output_type", "text")
+      // console.log(formData);
+      const options = {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+        },
+        body: formData,
+      };
+// Uncomment for release--------------------------------------------
+      const response = await fetch(
+        "https://api.worqhat.com/api/ai/images/v2/image-analysis",
+        options,
+      );
+      const data = await response.json();
+       console.log("Image Analysis Response:", data);
+      // ----------------------------------------------------------------
+      setGeneratedAnalysis("Interview Setup Analysis");
+    } catch (error) {
+      console.error("Error capturing image from camera:", error);
+    }
+  };
+
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
   useEffect(() => {
-    if (videoEnded) {
-      const element = document.getElementById("startTimer");
+    if (videoEnded && webcamRef?.current) {
+      // console.log("Capturing random frame...");
 
-      if (element) {
-        element.style.display = "flex";
+      // Access the video element within the Webcam component
+      const videoElement = webcamRef.current.video;
+
+      if (videoElement && !videoElement.paused) {
+
+        setCapturing(true);
+        setIsVisible(false);
+
+        mediaRecorderRef.current = new MediaRecorder(
+          webcamRef.current.stream as MediaStream,
+        );
+        mediaRecorderRef.current.addEventListener(
+          "dataavailable",
+          handleDataAvailable,
+        );
+        mediaRecorderRef.current.start();
       }
-
-      setCapturing(true);
-      setIsVisible(false);
-
-      mediaRecorderRef.current = new MediaRecorder(
-        webcamRef?.current?.stream as MediaStream,
-      );
-      mediaRecorderRef.current.addEventListener(
-        "dataavailable",
-        handleDataAvailable,
-      );
-      mediaRecorderRef.current.start();
     }
   }, [
     videoEnded,
@@ -177,9 +227,12 @@ of `videoEnded` changes. */
     handleDataAvailable,
   ]);
 
+
   /* The above code is a TypeScript React code snippet. It defines a function called
 `handleStartCaptureClick` using the `useCallback` hook. */
   const handleStartCaptureClick = useCallback(() => {
+    console.log("testing");
+    handleCaptureFromCamera();
     const startTimer = document.getElementById("startTimer");
     if (startTimer) {
       startTimer.style.display = "none";
@@ -539,7 +592,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                 </div>
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    Feedback
+                    Feedback about Candidate's Knowledge
                   </h2>
                   <div className="mt-4 feedbackText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
                     <p className="prose prose-sm max-w-none">
@@ -549,6 +602,21 @@ a width of 480, height of 640, and facing mode set to "user". */
                         </div>
                       )}
                       {!isLoading && <p>{generatedFeedback}</p>}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
+                    Feedback about interview setup
+                  </h2>
+                  <div className="mt-4 AnalysisText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
+                    <p className="prose prose-sm max-w-none">
+                      {isLoading && (
+                        <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-900 bg-opacity-50">
+                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+                        </div>
+                      )}
+                      {!isLoading && <p>{generatedAnalysis}</p>}
                     </p>
                   </div>
                 </div>
@@ -725,6 +793,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     ) : (
                                       <div className="flex items-center justify-center gap-x-2">
                                         <span>Process transcript</span>
+
                                         <svg
                                           className="w-5 h-5"
                                           viewBox="0 0 24 24"
@@ -750,6 +819,13 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     )}
                                   </span>
                                 </button>
+                                {/* <video
+                                  ref={videoRef}
+                                  style={{ width: "auto", height: "auto" }}
+                                /> */}
+                                {/* <button onClick={handleCaptureFromCamera}>
+                                  Capture Image from Camera
+                                </button> */}
                               </div>
                             )}
                           </>
