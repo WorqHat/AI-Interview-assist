@@ -171,9 +171,12 @@ empty dependency array `[]`. */
 
       const formData = new FormData();
       formData.append("image", photoBlob);
-      formData.append("question", "tell me about general interview setup from the image");
-      formData.append("output_type", "text")
-      // console.log(formData);
+      formData.append(
+        "question",
+        "tell me about general interview setup from the image",
+      );
+      formData.append("output_type", "text");
+
       const options = {
         method: "POST",
         headers: {
@@ -181,15 +184,19 @@ empty dependency array `[]`. */
         },
         body: formData,
       };
-// Uncomment for release--------------------------------------------
+
       const response = await fetch(
         "https://api.worqhat.com/api/ai/images/v2/image-analysis",
         options,
       );
+
       const data = await response.json();
-       console.log("Image Analysis Response:", data);
-      // ----------------------------------------------------------------
-      setGeneratedAnalysis("Interview Setup Analysis: ");
+      console.log("Image Analysis Response:", data);
+
+      const context = data.data;
+      console.log(context);
+
+      setGeneratedAnalysis("Interview Setup Analysis: " + context);
     } catch (error) {
       console.error("Error capturing image from camera:", error);
     }
