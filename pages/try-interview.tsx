@@ -167,7 +167,7 @@ empty dependency array `[]`. */
 
       const photoBlob = await imageCapture.takePhoto();
 
-      // console.log(photoBlob);
+      console.log(photoBlob);
 
       const formData = new FormData();
       formData.append("image", photoBlob);
@@ -189,7 +189,7 @@ empty dependency array `[]`. */
       const data = await response.json();
        console.log("Image Analysis Response:", data);
       // ----------------------------------------------------------------
-      setGeneratedAnalysis("Interview Setup Analysis");
+      setGeneratedAnalysis("Interview Setup Analysis: ");
     } catch (error) {
       console.error("Error capturing image from camera:", error);
     }
@@ -592,8 +592,9 @@ a width of 480, height of 640, and facing mode set to "user". */
                 </div>
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    Feedback about Candidate's Knowledge
+                    Feedback about Candidate&apos;s Knowledge
                   </h2>
+
                   <div className="mt-4 feedbackText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
                     <p className="prose prose-sm max-w-none">
                       {isLoading && (
@@ -684,9 +685,7 @@ a width of 480, height of 640, and facing mode set to "user". */
                               crossOrigin="anonymous"
                             >
                               <source
-                                src={
-                                  randomQuestion.file
-                                }
+                                src={randomQuestion.file}
                                 type="audio/mp3"
                               />
                             </video>
