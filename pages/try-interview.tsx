@@ -99,7 +99,7 @@ const Interview: React.FC = () => {
 
   const router = useRouter();
   const receivedData = router.query.user;
-  
+
   if(typeof receivedData === 'string'){
   var username : string =receivedData;
   userid = username;
@@ -381,13 +381,15 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
           });
 
           if (results.transcript.length > 0) {
-            const prompt = `Please give feedback on the following interview question: ${question} given the following transcript: ${
-              results.transcript
-            }. ${
-              selected.name === "Behavioral"
-                ? "Please also give feedback on the candidate's communication skills. Make sure their response is structured (perhaps using the STAR or PAR frameworks)."
-                : "Please also give feedback on the candidate's communication skills. Make sure they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question."
-            } \n\n\ Feedback on the candidate's response:`;
+            const transcriptPrompt = `Interview Question: ${question} Answer: ${results.transcript}.`;
+
+            const feedbackPrompt = selected.name === "Behavioral"
+                ? "Please also give feedback on the candidate's communication skills. Make sure" +
+                " their response is structured (perhaps using the STAR or PAR frameworks)."
+                : "Please also give feedback on the candidate's communication skills. Make sure" +
+                " they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question.";
+
+            const prompt = `${transcriptPrompt} ${feedbackPrompt} \n\n\ Feedback on the candidate's response:`;
 
             setGeneratedFeedback("");
 
@@ -396,14 +398,15 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               {
                 method: "POST",
                 headers: {
-                  Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+                  Authorization: "Bearer sk-b52cc1e8abe5415193c9811419287043",
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   training_data:
-                    "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
+                    "You are a tech hiring manager. You are to only provide feedback on the" +
+                      " interview candidate's transcript.",
                   question: prompt,
-                  randomness: 0.2,
+                  randomness: 0.1,
                 }),
               },
             );
@@ -1992,7 +1995,7 @@ a width of 480, height of 640, and facing mode set to "user". */
 
 export default Interview;
 export const getServerSideProps = async (context: any) => {
-  
+
   ensureAuthenticated(context.req, context.res, () => {});
   return {
     props: {},
