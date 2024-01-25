@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-exports.__esModule = true;
+// exports.__esModule = true;
 exports.config = void 0;
 /* The code is importing the `IncomingForm` class from the "formidable" package and assigning it to the
 variable `IncomingForm`. It is also importing the `fs` module from the Node.js standard library
