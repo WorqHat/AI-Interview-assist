@@ -7,7 +7,7 @@ const fs = require("fs");
 variable `FormData`. It is also importing the `fetch` function from the "node-fetch" package. These
 imports are used to handle form data and make HTTP requests respectively. */
 import FormData from "form-data";
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 /* The code `import dotenv from "dotenv";` is importing the `dotenv` package, which is used to load
 environment variables from a `.env` file into the Node.js process. */
 import dotenv from "dotenv";
