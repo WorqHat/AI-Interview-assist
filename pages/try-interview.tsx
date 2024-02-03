@@ -180,7 +180,7 @@ empty dependency array `[]`. */
       const options = {
         method: "POST",
         headers: {
-          Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+          Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
         },
         body: formData,
       };
@@ -424,7 +424,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
             const options = {
               method: "POST",
               headers: {
-                Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+                Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
