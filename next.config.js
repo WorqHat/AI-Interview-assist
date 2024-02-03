@@ -4,7 +4,6 @@ require("dotenv").config();
 `reactStrictMode` set to `true`, which enables strict mode for React. */
 const nextConfig = {
   reactStrictMode: true,
-  output: "export",  // <=== enables static exports
   env: {
     JWT_SECRET: process.env.JWT_SECRET,
   },
