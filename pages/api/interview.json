@@ -1,0 +1,26 @@
+{
+  "behaviouralQuestion": {
+    "b1": "Describe a challenging project you've worked on. How did you approach it, and what was the outcome?",
+    "b2": "Tell me about a time when you had to meet a tight deadline. How did you prioritize tasks and ensure timely completion?",
+    "b3": "Discuss a situation where you had to work with a difficult team member. How did you handle the conflict, and what was the resolution?",
+    "b4": "Give an example of when you had to adapt to a significant change at work. How did you handle it, and what was the impact?",
+    "b5": "Describe a successful collaboration effort you were part of. What role did you play, and how did it contribute to the project's success?",
+    "b6": "Share a situation where you identified a problem and took the initiative to solve it. What was the problem, and what steps did you take?",
+    "b7": "Discuss a time when you had to provide constructive feedback to a colleague. How did you approach the conversation, and what was the outcome?",
+    "b8": "Tell me about a mistake you made at work. What did you learn from it, and how did you prevent similar errors in the future?",
+    "b9": "Describe a situation where you had to handle competing priorities. How did you manage your time and ensure all tasks were completed successfully?",
+    "b10": "Give an example of a time when you had to lead a team through a challenging project. What leadership strategies did you employ, and what was the result?"
+  },
+  "technicalQuestions": {
+    "t1": "Explain the concept of Object-Oriented Programming (OOP) and provide an example of how you have applied it in your previous work.",
+    "t2": "Can you discuss the differences between RESTful and SOAP web services? When would you choose one over the other in a project?",
+    "t3": "Describe the process of optimizing a database query for better performance. What tools or techniques have you used in the past for database optimization?",
+    "t4": "Walk me through the steps you would take to troubleshoot a network connectivity issue.",
+    "t5": "Explain the importance of version control and describe your experience with a version control system such as Git.",
+    "t6": "How do you approach debugging a complex piece of code? Can you provide an example from your previous projects?",
+    "t7": "Discuss the differences between asynchronous and synchronous programming. When is it beneficial to use each approach?",
+    "t8": "Explain the concept of design patterns and provide an example of a design pattern you have used in your development work.",
+    "t9": "Describe your experience with containerization technologies like Docker. How have you used them in your previous projects?",
+    "t10": "Discuss a challenging technical problem you faced in your previous role and how you went about solving it. What tools or methodologies did you employ?"
+  }
+}

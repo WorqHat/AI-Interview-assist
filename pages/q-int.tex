@@ -16,13 +16,8 @@ webcam component and a video processing library called FFmpeg. */
 import Webcam from "react-webcam";
 import { createFFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 import dotenv from "dotenv";
-import { ensureAuthenticated } from "../utils/authMiddleware";
-import questionsSet from './api/interview.json'
-import { useRouter } from "next/router";
 dotenv.config();
-let userid:string;
-import fs from "fs";
-import path from "path";
+
 /* The above code is defining an array of objects called "questions". Each object represents a question
 and contains properties such as id, name, description, and difficulty. The questions array is
 populated with two question objects. */
@@ -92,20 +87,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-
-
-
 const Interview: React.FC = () => {
-
-  const router = useRouter();
-  const receivedData = router.query.user;
-
-  if(typeof receivedData === 'string'){
-  var username : string =receivedData;
-  userid = username;
-  // console.log("receivedData",userid);
-  }
-
   const [selected, setSelected] = useState(questions[0]);
   // const [selectedInterviewer, setSelectedInterviewer] = useState(
   //   interviewers[0],
@@ -129,11 +111,7 @@ const Interview: React.FC = () => {
   const [completed, setCompleted] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [generatedFeedback, setGeneratedFeedback] = useState("");
-  const [generatedAnalysis, setGeneratedAnalysis] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [randomQuestion, selectRandomQuestion] = useState({file:"", Content:""});
-  // console.log("initialId",userid);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   /* The below code is defining a function called `handleDataAvailable` using the `useCallback` hook.
 This function takes in a `BlobEvent` object as a parameter. */
@@ -155,76 +133,27 @@ empty dependency array `[]`. */
     setIsDesktop(window.innerWidth >= 768);
   }, []);
 
-  const handleCaptureFromCamera = async () => {
-    try {
-      const constraints = { video: true };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-      const track = stream.getVideoTracks()[0];
-      const imageCapture = new (window as any).ImageCapture(track);
-
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
-      const photoBlob = await imageCapture.takePhoto();
-
-      console.log(photoBlob);
-
-      const formData = new FormData();
-      formData.append("image", photoBlob);
-      formData.append(
-        "question",
-        "tell me about general interview setup from the image",
-      );
-      formData.append("output_type", "text");
-
-      const options = {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
-        },
-        body: formData,
-      };
-
-      const response = await fetch(
-        "https://api.worqhat.com/api/ai/images/v2/image-analysis",
-        options,
-      );
-
-      const data = await response.json();
-      console.log("Image Analysis Response:", data);
-
-      const context = data.data;
-      console.log(context);
-
-      setGeneratedAnalysis("Interview Setup Analysis: " + context);
-    } catch (error) {
-      console.error("Error capturing image from camera:", error);
-    }
-  };
-
   /* The below code is a useEffect hook in a TypeScript React component. It is triggered when the value
 of `videoEnded` changes. */
   useEffect(() => {
-    if (videoEnded && webcamRef?.current) {
-      // console.log("Capturing random frame...");
+    if (videoEnded) {
+      const element = document.getElementById("startTimer");
 
-      // Access the video element within the Webcam component
-      const videoElement = webcamRef.current.video;
-
-      if (videoElement && !videoElement.paused) {
-
-        setCapturing(true);
-        setIsVisible(false);
-
-        mediaRecorderRef.current = new MediaRecorder(
-          webcamRef.current.stream as MediaStream,
-        );
-        mediaRecorderRef.current.addEventListener(
-          "dataavailable",
-          handleDataAvailable,
-        );
-        mediaRecorderRef.current.start();
+      if (element) {
+        element.style.display = "flex";
       }
+
+      setCapturing(true);
+      setIsVisible(false);
+
+      mediaRecorderRef.current = new MediaRecorder(
+        webcamRef?.current?.stream as MediaStream,
+      );
+      mediaRecorderRef.current.addEventListener(
+        "dataavailable",
+        handleDataAvailable,
+      );
+      mediaRecorderRef.current.start();
     }
   }, [
     videoEnded,
@@ -234,12 +163,9 @@ of `videoEnded` changes. */
     handleDataAvailable,
   ]);
 
-
   /* The above code is a TypeScript React code snippet. It defines a function called
 `handleStartCaptureClick` using the `useCallback` hook. */
   const handleStartCaptureClick = useCallback(() => {
-    console.log("testing");
-    handleCaptureFromCamera();
     const startTimer = document.getElementById("startTimer");
     if (startTimer) {
       startTimer.style.display = "none";
@@ -284,30 +210,6 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
     };
   }, [capturing, seconds, handleStopCaptureClick]);
 
-
-  const handleRandomQuestion  = async () => {
-    if( selected.name === "Behavioral"){
-        const bhQuestions = questionsSet.behaviouralQuestion;
-        // console.log("questions",bhQuestions);
-        const keys = Object.keys(bhQuestions);
-        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-        const randomValue = bhQuestions[randomKey as keyof typeof bhQuestions];
-        // console.log("questionset",randomKey, randomValue);
-        randomQuestion.file = "/techinterview/"+randomKey+".mp3";
-        randomQuestion.Content = randomValue;
-        // console.log("questionset",randomQuestion);
-    }else{
-        const techquestions = questionsSet.technicalQuestions;
-        // console.log("questions",techquestions);
-        const keys = Object.keys(techquestions);
-        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-        const randomValue = techquestions[randomKey as keyof typeof techquestions];
-        randomQuestion.file = "/techinterview/"+randomKey+".mp3";
-        randomQuestion.Content = randomValue;
-        // console.log("questionset",randomQuestion);
-    }
-  }
-
   const handleDownload = async () => {
     if (recordedChunks.length) {
       setSubmitting(true);
@@ -351,7 +253,14 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
       const formData = new FormData();
       formData.append("file", output, `${unique_id}.mp3`);
 
-      const question = randomQuestion.Content;
+      const question =
+        selected.name === "Behavioral"
+          ? `Tell me about yourself. Why don${`’`}t you walk me through your resume...............?`
+          : `Tell me about yourself. Why don${`’`}t you walk me through your resumee?`
+          ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
+          : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
+          ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
+          : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?";
 
       setStatus("Transcribing");
 
@@ -381,15 +290,13 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
           });
 
           if (results.transcript.length > 0) {
-            const transcriptPrompt = `Interview Question: ${question} Answer: ${results.transcript}.`;
-
-            const feedbackPrompt = selected.name === "Behavioral"
-                ? "Please also give feedback on the candidate's communication skills. Make sure" +
-                " their response is structured (perhaps using the STAR or PAR frameworks)."
-                : "Please also give feedback on the candidate's communication skills. Make sure" +
-                " they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question.";
-
-            const prompt = `${transcriptPrompt} ${feedbackPrompt} \n\n\ Feedback on the candidate's response:`;
+            const prompt = `Please give feedback on the following interview question: ${question} given the following transcript: ${
+              results.transcript
+            }. ${
+              selected.name === "Behavioral"
+                ? "Please also give feedback on the candidate's communication skills. Make sure their response is structured (perhaps using the STAR or PAR frameworks)."
+                : "Please also give feedback on the candidate's communication skills. Make sure they accurately explain their thoughts in a coherent way. Make sure they stay on topic and relevant to the question."
+            } \n\n\ Feedback on the candidate's response:`;
 
             setGeneratedFeedback("");
 
@@ -398,15 +305,14 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               {
                 method: "POST",
                 headers: {
-                  Authorization: "Bearer sk-b52cc1e8abe5415193c9811419287043",
+                  Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   training_data:
-                    "You are a tech hiring manager. You are to only provide feedback on the" +
-                      " interview candidate's transcript.",
+                    "You are a tech hiring manager. You are to only provide feedback on the interview candidate's transcript. If it is not relevant and does not answer the question, make sure to say that. Do not be overly verbose and focus on the candidate's response and just give feedback on the candidate's response.",
                   question: prompt,
-                  randomness: 0.1,
+                  randomness: 0.2,
                 }),
               },
             );
@@ -419,7 +325,6 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
             setIsLoading(false);
             setGeneratedFeedback(data.content);
 
-
             // Store question, prompt, and feedback in the specified format
             const options = {
               method: "POST",
@@ -430,7 +335,6 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               body: JSON.stringify({
                 collection: "interview",
                 data: {
-                  user: userid,
                   interviewquestion: question,
                   userresponse: results.transcript,
                   feedback: data.content,
@@ -602,9 +506,8 @@ a width of 480, height of 640, and facing mode set to "user". */
                 </div>
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    Feedback about Candidate&apos;s Knowledge
+                    Feedback
                   </h2>
-
                   <div className="mt-4 feedbackText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
                     <p className="prose prose-sm max-w-none">
                       {isLoading && (
@@ -616,21 +519,6 @@ a width of 480, height of 640, and facing mode set to "user". */
                     </p>
                   </div>
                 </div>
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    Feedback about interview setup
-                  </h2>
-                  <div className="mt-4 AnalysisText flex gap-2.5 rounded-lg border border-[#EEEEEE] bg-[#FAFAFA] p-4 leading-6 text-gray-900 min-h-[100px]">
-                    <p className="prose prose-sm max-w-none">
-                      {isLoading && (
-                        <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-900 bg-opacity-50">
-                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
-                        </div>
-                      )}
-                      {!isLoading && <p>{generatedAnalysis}</p>}
-                    </p>
-                  </div>
-                </div>
               </motion.div>
             </div>
           ) : (
@@ -638,7 +526,13 @@ a width of 480, height of 640, and facing mode set to "user". */
               {recordingPermission ? (
                 <div className="w-full flex flex-col max-w-[1080px] mx-auto justify-center">
                   <h2 className="text-2xl font-semibold text-left text-[#1D2B3A] mb-2">
-                    {randomQuestion.Content}
+                    {selected.name === "Behavioral"
+                      ? `Tell me about yourself. Why don${`’`}t you walk me through your resume?`
+                      : `Tell me about yourself. Why don${`’`}t you walk me through your resumees?`
+                      ? "What is a Hash Table, and what is the average case and worst case time for each of its operations?"
+                      : "What is a Hash Table, and what is the average case and worst case time for each of its operationsss?"
+                      ? "Uber is looking to expand its product line. Talk me through how you would approach this problem."
+                      : "You have a 3-gallon jug and 5-gallon jug, how do you measure out exactly 4 gallons?"}
                   </h2>
                   <span className="text-[14px] leading-[20px] text-[#1a2b3b] font-normal mb-4">
                     Asked by top companies like Google, Facebook and more
@@ -695,8 +589,12 @@ a width of 480, height of 640, and facing mode set to "user". */
                               crossOrigin="anonymous"
                             >
                               <source
-                                src={randomQuestion.file}
-                                type="audio/mp3"
+                                src={
+                                  selected.name === "Behavioral"
+                                    ? "/techinterview/b1.mp3"
+                                    : "/interviewers/RaviTechnical.mp4"
+                                }
+                                type="video/mp4"
                               />
                             </video>
                           </div>
@@ -802,7 +700,6 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     ) : (
                                       <div className="flex items-center justify-center gap-x-2">
                                         <span>Process transcript</span>
-
                                         <svg
                                           className="w-5 h-5"
                                           viewBox="0 0 24 24"
@@ -828,13 +725,6 @@ a width of 480, height of 640, and facing mode set to "user". */
                                     )}
                                   </span>
                                 </button>
-                                {/* <video
-                                  ref={videoRef}
-                                  style={{ width: "auto", height: "auto" }}
-                                /> */}
-                                {/* <button onClick={handleCaptureFromCamera}>
-                                  Capture Image from Camera
-                                </button> */}
                               </div>
                             )}
                           </>
@@ -1138,7 +1028,6 @@ a width of 480, height of 640, and facing mode set to "user". */
                       <button
                         onClick={() => {
                           setStep(3);
-                          handleRandomQuestion();
                         }}
                         className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#1E2B3A] text-white hover:[linear-gradient(0deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), #0D2247] no-underline flex gap-x-2  active:scale-95 scale-100 duration-75"
                         style={{
@@ -1994,10 +1883,3 @@ a width of 480, height of 640, and facing mode set to "user". */
 }
 
 export default Interview;
-export const getServerSideProps = async (context: any) => {
-
-  ensureAuthenticated(context.req, context.res, () => {});
-  return {
-    props: {},
-  };
-};
