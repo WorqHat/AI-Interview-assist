@@ -13,14 +13,11 @@ const Login: React.FC = () => {
   const [isNumericDigit, setIsNumericDigit] = useState(false);
   const [isSpecialCharacter, setIsSpecialCharacter] = useState(false);
   const [isLengthValid, setIsLengthValid] = useState(false);
-  const [isPasswordValid, setIsPasswordValid] = useState(false); 
-
-  const formData = new FormData();
-  formData.append("username", username);
-  formData.append("password", password);
+  const [isPasswordValid, setIsPasswordValid] = useState(false);
 
   const router = useRouter();
   const isUsernameValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
@@ -58,6 +55,10 @@ const Login: React.FC = () => {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+
       const response = await fetch("/api/passport", {
         method: "POST",
         headers: {
@@ -67,7 +68,7 @@ const Login: React.FC = () => {
       });
 
       if (response.ok) {
-        const user =await response.json()
+        const user = await response.json();
         // console.log("Login successful!",user.userData.username);
 
         router.push(`/try-interview?user=${user.userData.username}`);
@@ -84,7 +85,7 @@ const Login: React.FC = () => {
 
   const toggleMode = () => {
     setIsSignUpMode((prevMode) => !prevMode);
-    setError(null); 
+    setError(null);
   };
 
   return (

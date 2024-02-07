@@ -94,7 +94,7 @@ function handler(req, res) {
                     options = {
                         method: "POST",
                         headers: {
-                            Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89"
+                            Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73"
                         },
                         body: formData
                     };

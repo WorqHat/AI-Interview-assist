@@ -61,7 +61,7 @@ Over here we have hardcoded the user's API key. This is not a good practice as i
   const options = {
     method: "POST",
     headers: {
-      Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
+      Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
     },
     body: formData,
   };
