@@ -374,7 +374,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
           console.log("Uploaded successfully!");
 
           await Promise.allSettled([
-            new Promise((resolve) => setTimeout(resolve, 800)),
+            new Promise((resolve) => setTimeout(resolve, 8000)),
           ]).then(() => {
             setCompleted(true);
             console.log("Success!");
@@ -398,13 +398,13 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               {
                 method: "POST",
                 headers: {
-                  Authorization: "Bearer sk-b52cc1e8abe5415193c9811419287043",
+                  Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   training_data:
                     "You are a tech hiring manager. You are to only provide feedback on the" +
-                      " interview candidate's transcript.",
+                    " interview candidate's transcript.",
                   question: prompt,
                   randomness: 0.1,
                 }),
