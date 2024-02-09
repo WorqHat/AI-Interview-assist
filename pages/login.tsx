@@ -14,6 +14,7 @@ const Login: React.FC = () => {
   const [isSpecialCharacter, setIsSpecialCharacter] = useState(false);
   const [isLengthValid, setIsLengthValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); 
 
   const router = useRouter();
   const isUsernameValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
@@ -55,6 +56,7 @@ const Login: React.FC = () => {
     }
 
     try {
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("username", username);
       formData.append("password", password);
@@ -81,6 +83,9 @@ const Login: React.FC = () => {
       console.error("Login failed:", error);
       setError("An unexpected error occurred.");
     }
+    finally {
+    setIsLoading(false); // Step 3: End loading
+  }
   };
 
   const toggleMode = () => {
@@ -89,6 +94,10 @@ const Login: React.FC = () => {
   };
 
   return (
+    <div>
+    {isLoading ?  <div className="absolute top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-gray-900 bg-opacity-50">
+                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+                        </div> : (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 shadow-md rounded-md w-96">
         <Image
@@ -205,7 +214,8 @@ const Login: React.FC = () => {
         )}
       </div>
     </div>
-  );
-};
-
+  ) }
+  </div>
+);
+        }
 export default Login;
