@@ -180,7 +180,7 @@ empty dependency array `[]`. */
       const options = {
         method: "POST",
         headers: {
-          Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+          Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
         },
         body: formData,
       };
@@ -398,13 +398,13 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
               {
                 method: "POST",
                 headers: {
-                  Authorization: "Bearer sk-b52cc1e8abe5415193c9811419287043",
+                  Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                   training_data:
                     "You are a tech hiring manager. You are to only provide feedback on the" +
-                      " interview candidate's transcript.",
+                    " interview candidate's transcript.",
                   question: prompt,
                   randomness: 0.1,
                 }),
@@ -424,7 +424,7 @@ the dependencies (`capturing`, `seconds`, `handleStopCaptureClick`) change. */
             const options = {
               method: "POST",
               headers: {
-                Authorization: "Bearer sk-48478981d5464a4e8e8389f873b0bb73",
+                Authorization: "Bearer sk-02e44d2ccb164c738a6c4a65dbf75e89",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
