@@ -600,7 +600,7 @@ export default function Home() {
               </a>
 
               <div className="flex flex-col space-y-2 text-center text-sm font-semibold lg:flex-row lg:space-x-6 lg:space-y-0 lg:text-left">
-                <span>Copyright &copy; 2023 WorqHat (Winlysis Pvt. Ltd)</span>
+                <span>Copyright &copy; 2024 WorqHat (Winlysis Pvt. Ltd)</span>
                 <a
                   href="https://worqhat.com"
                   target="_blank"
