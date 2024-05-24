@@ -170,7 +170,7 @@ empty dependency array `[]`. */
       console.log(photoBlob);
 
       const formData = new FormData();
-      formData.append("image", photoBlob);
+      formData.append("images", photoBlob);
       formData.append(
         "question",
         "tell me about general interview setup from the image",
@@ -193,7 +193,7 @@ empty dependency array `[]`. */
       const data = await response.json();
       console.log("Image Analysis Response:", data);
 
-      const context = data.data;
+      const context = data.content;
       console.log(context);
 
       setGeneratedAnalysis("Interview Setup Analysis: " + context);
